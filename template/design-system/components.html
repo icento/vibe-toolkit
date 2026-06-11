@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design system — component gallery</title>
+  <link rel="stylesheet" href="tokens.css">
+  <style>
+    /* Gallery chrome only — never reuse these classes in mockups. */
+    .gallery { max-width: 56rem; margin: 0 auto; padding: var(--space-7) var(--space-5); }
+    .gallery section { margin-bottom: var(--space-7); }
+    .row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+    .swatch { width: 9rem; }
+    .swatch div { height: 3rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border); }
+    .swatch code { display: block; margin-top: var(--space-1); font-size: var(--text-xs); }
+  </style>
+</head>
+<body>
+  <main class="gallery">
+    <h1>Component gallery</h1>
+    <p class="help">Every visual decision in mockups comes from <code>tokens.css</code>.
+      New component or token needed? Add it here first, then use it.</p>
+
+    <section>
+      <h2>Palette</h2>
+      <div class="row">
+        <div class="swatch"><div style="background: var(--color-primary)"></div><code>--color-primary</code></div>
+        <div class="swatch"><div style="background: var(--color-text)"></div><code>--color-text</code></div>
+        <div class="swatch"><div style="background: var(--color-text-muted)"></div><code>--color-text-muted</code></div>
+        <div class="swatch"><div style="background: var(--color-success)"></div><code>--color-success</code></div>
+        <div class="swatch"><div style="background: var(--color-warning)"></div><code>--color-warning</code></div>
+        <div class="swatch"><div style="background: var(--color-danger)"></div><code>--color-danger</code></div>
+        <div class="swatch"><div style="background: var(--color-surface)"></div><code>--color-surface</code></div>
+        <div class="swatch"><div style="background: var(--color-bg)"></div><code>--color-bg</code></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Typography</h2>
+      <h1>Heading one — 2.25rem</h1>
+      <h2>Heading two — 1.75rem</h2>
+      <h3>Heading three — 1.375rem</h3>
+      <p>Body text at <code>--text-base</code> with <code>--leading-normal</code>.
+        Muted text uses <span class="help">--color-text-muted at --text-xs</span>.</p>
+    </section>
+
+    <section>
+      <h2>Buttons</h2>
+      <div class="row">
+        <button class="btn btn-primary">Primary action</button>
+        <button class="btn">Secondary</button>
+        <button class="btn btn-danger">Destructive</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Form fields</h2>
+      <div class="card" style="max-width: 24rem">
+        <label class="label" for="email">Email address</label>
+        <input class="input" id="email" type="email" placeholder="you@company.com">
+        <p class="help" style="margin-top: var(--space-1)">We never share your email.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Badges</h2>
+      <div class="row">
+        <span class="badge">In progress</span>
+        <span class="badge badge-success">Delivered</span>
+        <span class="badge badge-warning">Deferred</span>
+        <span class="badge badge-danger">Failed</span>
+      </div>
+    </section>
+
+    <section>
+      <h2>Table</h2>
+      <div class="card" style="padding: 0">
+        <table class="table">
+          <thead><tr><th>Invoice</th><th>Customer</th><th>Status</th><th>Amount</th></tr></thead>
+          <tbody>
+            <tr><td>INV-2041</td><td>Aurora Labs</td><td><span class="badge badge-success">Paid</span></td><td>$1,280.00</td></tr>
+            <tr><td>INV-2042</td><td>Northwind</td><td><span class="badge badge-warning">Pending</span></td><td>$640.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

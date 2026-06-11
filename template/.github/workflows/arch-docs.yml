@@ -1,0 +1,17 @@
+name: Architecture docs
+
+on:
+  pull_request:
+    paths:
+      - "docs/architecture/**"
+      - "scripts/arch-docs.mjs"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: node scripts/arch-docs.mjs lint

@@ -1,0 +1,51 @@
+<!-- vibe-toolkit:architecture -->
+## Architecture docs contract
+
+Design knowledge lives in `docs/architecture/` — `INDEX.md` (generated index),
+`principles.md` (non-negotiables), `views/` (C4 context/containers), `adr/`
+(immutable decision records), `designs/` (living per-component docs).
+
+For **every** request, before writing code:
+
+1. **Recall.** Identify the code paths you will touch. Read `docs/architecture/INDEX.md`,
+   then open every doc whose `affects:` frontmatter globs match those paths (grep
+   `affects` across `docs/architecture/` if unsure). Read `principles.md` and
+   `style.md` (the default engineering style — safety > performance > DX) once per session.
+2. **Classify** the request and act accordingly:
+
+   | Request shape | Doc action |
+   |---|---|
+   | Bug fix / refactor within the existing design | None — code only |
+   | Feature that fits the current design | Update the matching design doc, same change |
+   | Feature needing a new structural/technology choice | New ADR (`/vibe-adr`) + design doc (`/vibe-design`) |
+   | Redesign / replace a component | New ADR superseding the old + rewrite design doc |
+   | Request that contradicts an accepted ADR | **Stop.** Tell the user which ADR conflicts and offer: fit inside it, or supersede it |
+3. **Implement and record atomically.** Doc updates ship in the same commit/PR as the
+   code. Never leave doc updates "for later".
+4. **Re-index and lint.** After any doc change: `node scripts/arch-docs.mjs index`,
+   then `node scripts/arch-docs.mjs lint` must pass.
+
+### Request workflow
+
+- Non-trivial requests (won't finish this session, needs design work, or has UI) run
+  through `/vibe-request`: a phase-gated state machine recorded in
+  `docs/architecture/requests/`, with triage sizes S/M/L deciding which phases apply.
+- Session start: check `docs/architecture/requests/` for `open`/`in-progress` entries
+  before asking what's next; if a new ask matches a `deferred`/`declined` one,
+  surface that history instead of starting fresh.
+- Gates are the user's, not yours: record `approvals:` dates only on an explicit
+  approval — lint enforces that phases never cross an unapproved gate.
+- QA findings route by class: bug → fix; design-gap → reopen designing;
+  scope-change → reopen understanding with the user.
+- UI mockups (`/vibe-mockup`) draw every visual value from `design-system/tokens.css`;
+  new components/tokens are added to the design system first, never inlined.
+
+Hard rules:
+
+- Accepted ADRs are immutable — supersede with a new ADR, never edit. Design docs in
+  `designs/` are living — keep them matching the code *now*.
+- The second time you add a variant of something (second provider, second channel),
+  that is a design event: extract the pattern into the design doc before adding the third.
+- If a bug reveals a design doc was wrong, fixing the doc is part of the fix.
+- ADRs are rare. Litmus test: would a future agent make the wrong choice without it?
+<!-- /vibe-toolkit:architecture -->

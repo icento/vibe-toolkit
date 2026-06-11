@@ -10,8 +10,10 @@ description: Create static HTML/CSS mockups for a request's UI, consistent with 
    `.card`, `.badge`, `.table`…). If a screen needs a component or token that
    doesn't exist, add it to `tokens.css` and show it in
    `design-system/components.html` *first*, then use it. Never hardcode a color,
-   font size, or spacing value inside a mockup. This is what keeps every screen —
-   and every future frontend — consistent.
+   font size, spacing, or **layout size** (page max-width, field/column widths)
+   inside a mockup — layout geometry is a token too (`--size-page-max`,
+   `--size-field`). This is what keeps every screen — and every future frontend —
+   consistent.
 2. **Layout.** `mockups/<NNNN-slug>/` with an `index.html` linking every screen;
    one HTML file per screen; each imports `../../design-system/tokens.css`.
    Static HTML/CSS only — no frameworks, no build step (a few inline-JS lines for

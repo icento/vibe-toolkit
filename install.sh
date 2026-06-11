@@ -35,7 +35,7 @@ else
   echo "appended architecture contract to CLAUDE.md"
 fi
 
-(cd "$TARGET" && node scripts/arch-docs.mjs index >/dev/null && node scripts/arch-docs.mjs lint)
+(cd "$TARGET" && node scripts/arch-docs.mjs check)
 
 echo
 echo "installed: $copied file(s) copied, $skipped skipped (already present)"

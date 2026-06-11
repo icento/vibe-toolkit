@@ -77,13 +77,16 @@ understanding → designing → aligning → planning → implementing → qa �
 ## The tooling
 
 ```sh
-node scripts/arch-docs.mjs lint    # validate frontmatter, supersession links, index freshness
+node scripts/arch-docs.mjs check   # regenerate the index, then validate — the everyday command
+node scripts/arch-docs.mjs lint    # validate only — CI uses this so a stale committed index fails
 node scripts/arch-docs.mjs index   # regenerate docs/architecture/INDEX.md
 ```
 
 Lint enforces: required fields (`title`, `summary`, `status`, `date`), status enums,
 `ADR-NNNN` ids matching filenames, `supersedes` targets existing **and** carrying
-`status: superseded`, and a non-stale index.
+`status: superseded`, gate approvals matching each request's phase, and a non-stale
+index. The index embeds request status/phase, so request records re-index often —
+`check` exists so that can never be forgotten.
 
 ## Repo layout
 

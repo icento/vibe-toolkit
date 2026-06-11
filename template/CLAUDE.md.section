@@ -22,8 +22,9 @@ For **every** request, before writing code:
    | Request that contradicts an accepted ADR | **Stop.** Tell the user which ADR conflicts and offer: fit inside it, or supersede it |
 3. **Implement and record atomically.** Doc updates ship in the same commit/PR as the
    code. Never leave doc updates "for later".
-4. **Re-index and lint.** After any doc change: `node scripts/arch-docs.mjs index`,
-   then `node scripts/arch-docs.mjs lint` must pass.
+4. **Check.** `node scripts/arch-docs.mjs check` (regenerates the index, then lints)
+   must pass after your **last** doc edit — request records change on every phase
+   transition, so run it last, not just first.
 
 ### Request workflow
 

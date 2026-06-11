@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // arch-docs.mjs — lint and index docs/architecture. Zero dependencies.
 //
-//   node scripts/arch-docs.mjs lint    validate frontmatter, cross-references, gates, index freshness
+//   node scripts/arch-docs.mjs check   regenerate the index, then validate — the everyday command
+//   node scripts/arch-docs.mjs lint    validate only (CI: a stale committed index fails here)
 //   node scripts/arch-docs.mjs index   regenerate docs/architecture/INDEX.md
 //
 // Override the docs root with ARCH_DOCS_DIR (default: docs/architecture).
@@ -288,6 +289,21 @@ if (cmd === "index") {
     console.error(`\n${errors.length} lint error(s) remain:\n` + errors.map((e) => `  - ${e}`).join("\n"));
     process.exit(1);
   }
+} else if (cmd === "check") {
+  // index + lint in one step: regenerating first removes the easiest mistake —
+  // editing a doc (especially a request record) and forgetting to re-index.
+  // CI keeps plain `lint` so a stale committed index still fails there.
+  const current = existsSync(INDEX_PATH) ? readFileSync(INDEX_PATH, "utf8") : null;
+  if (current !== index) {
+    writeFileSync(INDEX_PATH, index);
+    console.log(`wrote ${INDEX_PATH} (${docs.length} docs)`);
+  }
+  if (errors.length) {
+    console.error(errors.map((e) => `  - ${e}`).join("\n"));
+    console.error(`\n${errors.length} error(s) across ${docs.length} doc(s)`);
+    process.exit(1);
+  }
+  console.log(`ok — ${docs.length} doc(s), index fresh`);
 } else if (cmd === "lint") {
   const current = existsSync(INDEX_PATH) ? readFileSync(INDEX_PATH, "utf8") : null;
   if (current !== index) errors.push(`${INDEX_PATH} is stale — run: node scripts/arch-docs.mjs index`);
@@ -298,6 +314,6 @@ if (cmd === "index") {
   }
   console.log(`ok — ${docs.length} doc(s), index fresh`);
 } else {
-  console.error("usage: node scripts/arch-docs.mjs <lint|index>");
+  console.error("usage: node scripts/arch-docs.mjs <check|lint|index>");
   process.exit(1);
 }

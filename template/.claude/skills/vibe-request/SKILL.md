@@ -8,15 +8,19 @@ description: Drive a request through the phased workflow — understand, design,
 State lives in `docs/architecture/requests/<NNNN-slug>/request.md`. **Artifacts are
 the interface between phases** — point subagents at files, never at chat history.
 After every phase transition: update `phase`, `updated`, and `## Log` in request.md,
-then run `node scripts/arch-docs.mjs index` and confirm `lint` passes.
+then run `node scripts/arch-docs.mjs check`. The index embeds each request's
+status/phase/summary, so **every** request.md edit needs a re-run — make `check`
+the last command after the final edit, not just the first.
 
 ## Intake
 
 1. Check the ledger first: scan `docs/architecture/requests/` for a matching open,
    in-progress, deferred, or declined request — resume it or surface its history
    instead of opening a duplicate.
-2. New request: take the next REQ number, create the directory from
-   `docs/architecture/_templates/request/`, capture the ask in the user's words.
+2. New request: take the next REQ number, create the directory with a copy of
+   `_templates/request/request.md` only — copy `understanding.md`, `plan.md`, and
+   `qa-report.md` over when their phase starts, so smaller sizes never carry
+   unused placeholders. Capture the ask in the user's words.
 3. Triage the size, record the reasoning under `## Triage`:
    - **S** — fix/refactor within the existing design. Phases: implementing → qa →
      delivered. No gates, no ledger entry unless it spans sessions.
@@ -49,8 +53,9 @@ files); each subagent's prompt names the artifact files to read first. Design-do
 updates ship in the same change as the code.
 
 **qa** — spawn fresh subagents with NO implementation context. Their inputs:
-`understanding.md`, the design docs, mockups, and `plan.md`'s end-to-end
-verification section. Their job: break the result against the agreed spec. Write
+`understanding.md`, the design docs, mockups, `plan.md`'s end-to-end verification
+section, plus `principles.md` and `style.md` (conformance to both is in scope).
+Their job: break the result against the agreed spec. Write
 `qa-report.md` and route each finding:
 - **bug** → fix now; stay in qa until the report is clean
 - **design-gap** → set phase back to `designing`; update designs/ADRs, re-align if material
@@ -59,7 +64,8 @@ Backward transitions are normal — record each in `## Log` with the reason.
 
 **delivered** — give the user a delivery report: what changed, how it was verified
 (quote evidence from `qa-report.md`), and how to run it. Set `status: done`,
-`phase: delivered`, final index + lint.
+`phase: delivered`, then a final `node scripts/arch-docs.mjs check` after that
+last edit.
 
 ## Rules
 

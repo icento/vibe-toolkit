@@ -18,5 +18,5 @@ description: Create or update a living design doc for a component before buildin
    past decision, invoke `/vibe-adr` instead of rewriting this doc's story.
 4. **Design-first flow:** when the user asks to build something new, write this doc
    *before* the code and show it to the user — it is the cheapest review point.
-5. **Re-index:** run `node scripts/arch-docs.mjs index`, then confirm
-   `node scripts/arch-docs.mjs lint` passes.
+5. **Check:** `node scripts/arch-docs.mjs check` must pass (regenerates the
+   index, then lints).

@@ -19,6 +19,6 @@ description: Create an Architecture Decision Record. Use when a structural or te
    frontmatter `status` to `superseded`. Do not change its body.
 5. **Update related design docs** in `docs/architecture/designs/` so they describe the
    new current state.
-6. **Re-index:** run `node scripts/arch-docs.mjs index`, then confirm
-   `node scripts/arch-docs.mjs lint` passes.
+6. **Check:** `node scripts/arch-docs.mjs check` must pass (regenerates the
+   index, then lints).
 7. **Report** the new id, status, and what it supersedes, in one or two sentences.

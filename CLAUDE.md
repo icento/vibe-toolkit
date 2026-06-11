@@ -13,7 +13,7 @@ Rules for changing this repo:
   tokens everywhere.
 - `install.sh` must stay idempotent and never overwrite existing files in the target.
 - After changing anything in `template/docs/`, regenerate its index and lint it:
-  `cd template && node scripts/arch-docs.mjs index && node scripts/arch-docs.mjs lint`
+  `cd template && node scripts/arch-docs.mjs check`
 - After changing `install.sh` or the script, smoke-test: install into a temp dir and
   run lint there.
 - Keep README.md's "What gets installed" tree in sync with `template/`.

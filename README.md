@@ -89,3 +89,9 @@ Lint enforces: required fields (`title`, `summary`, `status`, `date`), status en
 
 `template/` is the payload `install.sh` copies into target repos. Everything outside
 it is the toolkit itself.
+
+## License
+
+MIT. The bundled style guide (`template/docs/architecture/style.md`) is compacted
+from TigerBeetle's [TIGER_STYLE.md](https://github.com/tigerbeetle/tigerbeetle/blob/main/docs/TIGER_STYLE.md)
+(Apache-2.0), with attribution in the file.

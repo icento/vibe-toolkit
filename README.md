@@ -23,11 +23,15 @@ three mechanisms:
 ## Install
 
 ```sh
-./install.sh /path/to/your-repo
+./install.sh /path/to/your-repo     # install — and upgrade: re-run on a new toolkit version
 ```
 
-Idempotent; never overwrites existing files. It copies the payload and appends the
-agent contract to the target's `CLAUDE.md` (marker-guarded). Then customize
+Idempotent, and upgrade-aware (conffile-style): `.vibe-toolkit/manifest` in the
+target records the sha256 of every file as installed. On re-install, missing files
+are copied, files you never touched are auto-updated when the toolkit changed them,
+and files your team modified are **never** overwritten — you get an `attention:`
+line to diff and merge by hand when an update exists for them. The agent contract
+in `CLAUDE.md` (marker-guarded) follows the same rules. After installing, customize
 `docs/architecture/principles.md` and the two views.
 
 ## What gets installed
@@ -51,6 +55,7 @@ design-system/            # tokens.css + components.html — visual truth for al
 scripts/arch-docs.mjs     # zero-dependency linter + index generator (Node 18+)
 .github/workflows/arch-docs.yml   # CI: lint on PRs touching the docs
 CLAUDE.md                 # gains the architecture contract section
+.vibe-toolkit/            # install manifest + version — powers safe upgrades
 ```
 
 ## The request workflow

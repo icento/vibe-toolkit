@@ -11,7 +11,9 @@ Rules for changing this repo:
 - `template/CLAUDE.md.section` is the agent-facing contract. Keep it under ~60 lines;
   it is prepended to every agent's context in every target repo, so every line costs
   tokens everywhere.
-- `install.sh` must stay idempotent and never overwrite existing files in the target.
+- `install.sh` must stay idempotent and must never overwrite a file the target has
+  modified since install (the `.vibe-toolkit/manifest` sha256 records decide this);
+  unmodified files are auto-upgraded. Bump `VERSION` whenever `template/` changes.
 - After changing anything in `template/docs/`, regenerate its index and lint it:
   `cd template && node scripts/arch-docs.mjs check`
 - After changing `install.sh` or the script, smoke-test: install into a temp dir and

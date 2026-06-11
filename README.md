@@ -23,8 +23,16 @@ three mechanisms:
 ## Install
 
 ```sh
-./install.sh /path/to/your-repo     # install — and upgrade: re-run on a new toolkit version
+# one-liner, no clone needed (the script fetches the toolkit itself):
+curl -fsSL https://raw.githubusercontent.com/icento/vibe-toolkit/main/install.sh | bash -s -- /path/to/your-repo
+
+# or from a clone:
+git clone --depth 1 https://github.com/icento/vibe-toolkit.git
+./vibe-toolkit/install.sh /path/to/your-repo
 ```
+
+Re-run either form to upgrade when the toolkit has a new version. Pin a branch or
+tag for the one-liner with `VIBE_TOOLKIT_REF=<ref>`.
 
 Idempotent, and upgrade-aware (conffile-style): `.vibe-toolkit/manifest` in the
 target records the sha256 of every file as installed. On re-install, missing files

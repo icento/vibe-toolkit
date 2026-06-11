@@ -12,8 +12,23 @@
 # docs/architecture/INDEX.md is generated in the target and is only copied when missing.
 set -euo pipefail
 
-TARGET="${1:?usage: ./install.sh <target-repo>}"
+TARGET="${1:?usage: ./install.sh <target-repo>   (or: curl -fsSL <raw install.sh url> | bash -s -- <target-repo>)}"
 TOOLKIT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Bootstrap: when run via `curl | bash` there is no template/ next to the script —
+# fetch the toolkit tarball (VIBE_TOOLKIT_REF pins a branch/tag, default main) and
+# run the bundled installer from it.
+if [ ! -d "$TOOLKIT_DIR/template" ]; then
+  REF="${VIBE_TOOLKIT_REF:-main}"
+  echo "no local template/ — fetching vibe-toolkit@$REF from GitHub..."
+  BOOTSTRAP_DIR="$(mktemp -d)"
+  trap 'rm -rf "$BOOTSTRAP_DIR"' EXIT
+  curl -fsSL "https://github.com/icento/vibe-toolkit/archive/refs/heads/$REF.tar.gz" \
+    | tar -xz -C "$BOOTSTRAP_DIR" --strip-components 1
+  bash "$BOOTSTRAP_DIR/install.sh" "$@"
+  exit $?
+fi
+
 SRC="$TOOLKIT_DIR/template"
 VERSION="$(cat "$TOOLKIT_DIR/VERSION")"
 

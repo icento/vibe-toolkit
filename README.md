@@ -49,6 +49,7 @@ docs/architecture/
   INDEX.md                # generated index — the agent's cheap recall layer
   principles.md           # non-negotiable constraints, read once per session
   style.md                # default engineering style (Tiger Style, compacted)
+  ui-principles.md        # default UI/UX rules — WCAG 2.2 AA floor + NN/g heuristics
   views/                  # C4 context + containers (mermaid, never images)
   adr/                    # immutable decision records (ADR-0001/0002 ship as seeds)
   designs/                # living per-component docs, one concern per file

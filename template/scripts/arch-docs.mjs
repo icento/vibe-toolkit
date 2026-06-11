@@ -48,7 +48,7 @@ function docType(relPath) {
   // In a request dir only request.md is the indexed record; understanding.md,
   // plan.md, qa-report.md are free-form phase artifacts.
   if (parts[0] === "requests") return parts[parts.length - 1] === "request.md" ? "request" : "ignore";
-  if (relPath === "principles.md" || relPath === "style.md") return "principles";
+  if (relPath === "principles.md" || relPath === "style.md" || relPath === "ui-principles.md") return "principles";
   return null;
 }
 
@@ -108,7 +108,7 @@ function loadDocs(errors) {
     const type = docType(rel);
     if (type === "ignore") continue;
     if (!type) {
-      errors.push(`${path}: unexpected location — docs live in adr/, designs/, views/, requests/, principles.md, or style.md`);
+      errors.push(`${path}: unexpected location — docs live in adr/, designs/, views/, requests/, principles.md, style.md, or ui-principles.md`);
       continue;
     }
     const { data, error } = parseFrontmatter(readFileSync(path, "utf8"));

@@ -1,6 +1,7 @@
 ---
 name: vibe-adr
 description: Create an Architecture Decision Record. Use when a structural or technology decision is made, reversed, or needs to be proposed — including when a request conflicts with an existing accepted ADR.
+model: fable
 ---
 
 # Create an ADR

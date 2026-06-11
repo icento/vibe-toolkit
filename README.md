@@ -60,6 +60,10 @@ design-system/            # tokens.css + components.html — visual truth for al
   vibe-adr/               # /vibe-adr  — create a decision record, handle supersession
   vibe-design/            # /vibe-design — create/update a component design doc
   vibe-mockup/            # /vibe-mockup — static HTML/CSS mockups on the design system
+.claude/agents/
+  vibe-planner.md         # planning subagent (fable) — turns the approved design into plan.md
+  vibe-implementer.md     # implementation subagent (opus) — executes one plan task
+  vibe-qa.md              # QA subagent (fable) — context-isolated, judges against the artifacts
 scripts/arch-docs.mjs     # zero-dependency linter + index generator (Node 18+)
 .github/workflows/arch-docs.yml   # CI: lint on PRs touching the docs
 CLAUDE.md                 # gains the architecture contract section
@@ -86,6 +90,14 @@ understanding → designing → aligning → planning → implementing → qa �
 - **QA is context-isolated**: fresh agents judge the result against the agreed
   artifacts; findings route back as bug / design-gap / scope-change.
 - **Backward transitions are normal** — QA reopening design is the process working.
+- **Models are routed by judgment, not uniformly**: the phases where quality
+  compounds run on the strongest model (`fable` — the `/vibe-design`,
+  `/vibe-adr`, and `/vibe-mockup` skills, the planner and QA subagents) while
+  execution runs on `opus` (the implementer subagent). Pins use aliases, never dated model ids, so
+  installed repos track current models. Override everything with the
+  `CLAUDE_CODE_SUBAGENT_MODEL` env var, or edit the `model:` frontmatter in
+  `.claude/agents/` and `.claude/skills/` (the manifest then treats those files
+  as yours and stops auto-upgrading them).
 
 ## The tooling
 

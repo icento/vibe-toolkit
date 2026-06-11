@@ -45,14 +45,14 @@ user explicitly approves → record `approvals.design` (gate G2).
 
 **planning** — write `plan.md` from the approved design: ordered tasks, each sized
 for one agent's context, naming files touched, dependencies, and a verification
-step. Use a Plan subagent for large scopes.
+step. Delegate large scopes to a `vibe-planner` subagent.
 
-**implementing** — execute `plan.md`, checking tasks off as they land. Independent
-tasks run as parallel subagents (worktree isolation when they touch overlapping
-files); each subagent's prompt names the artifact files to read first. Design-doc
-updates ship in the same change as the code.
+**implementing** — execute `plan.md`, checking tasks off as they land. Tasks run
+as `vibe-implementer` subagents — independent ones in parallel (worktree isolation
+when they touch overlapping files); each subagent's prompt names the artifact
+files to read first. Design-doc updates ship in the same change as the code.
 
-**qa** — spawn fresh subagents with NO implementation context. Their inputs:
+**qa** — spawn fresh `vibe-qa` subagents with NO implementation context. Their inputs:
 `understanding.md`, the design docs, mockups, `plan.md`'s end-to-end verification
 section, plus `principles.md` and `style.md` (conformance to both is in scope).
 Their job: break the result against the agreed spec. Write

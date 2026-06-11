@@ -1,6 +1,7 @@
 ---
 name: vibe-design
 description: Create or update a living design doc for a component before building it. Use when starting a new component/feature, or when a change alters a component's purpose, interface, or internals.
+model: fable
 ---
 
 # Create or update a design doc

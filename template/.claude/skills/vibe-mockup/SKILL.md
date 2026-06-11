@@ -1,6 +1,7 @@
 ---
 name: vibe-mockup
 description: Create static HTML/CSS mockups for a request's UI, consistent with the shared design system. Use during the designing phase whenever a request involves UI/UX.
+model: fable
 ---
 
 # Mockups

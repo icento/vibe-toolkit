@@ -4,7 +4,7 @@
 
 ## Principles
 
-- [Engineering principles](principles.md) — Non-negotiable constraints and conventions that apply to every change in this repository.
+- [Engineering principles](principles.md) — Non-negotiable constraints, derived from Tiger Style, that apply to every change in this repository.
 - [Engineering style (Tiger Style, compacted)](style.md) — Default coding style for all code in this repo — safety, performance, developer experience, in that order. Compacted from TigerBeetle's TIGER_STYLE.
 
 ## Views

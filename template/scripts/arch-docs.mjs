@@ -55,10 +55,32 @@ function docType(relPath) {
   return null;
 }
 
-// ---------- frontmatter (minimal YAML subset: scalars, [inline]/dashed lists, one-level maps) ----------
+// ---------- frontmatter (minimal YAML subset: scalars, [flow]/dashed lists, one-level maps) ----------
 
 function unquote(s) {
   return s.replace(/^["'](.*)["']$/, "$1");
+}
+
+// Flow sequences may wrap across lines ("affects:\n  [\n    'a', 'b',\n  ]") —
+// rejoin them onto the line that opened them so the parser stays line-based.
+function joinFlowSequences(lines) {
+  const depthOf = (s) => (s.match(/\[/g) ?? []).length - (s.match(/\]/g) ?? []).length;
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+    let depth = depthOf(line);
+    while (depth > 0 && i + 1 < lines.length) {
+      i += 1;
+      line = `${line} ${lines[i].trim()}`;
+      depth += depthOf(lines[i]);
+    }
+    if (/^\s*\[/.test(line) && out.length && /:\s*$/.test(out[out.length - 1])) {
+      out[out.length - 1] += ` ${line.trim()}`; // bracket opened on the line after "key:"
+    } else {
+      out.push(line);
+    }
+  }
+  return out;
 }
 
 function parseFrontmatter(text) {
@@ -67,7 +89,7 @@ function parseFrontmatter(text) {
   if (end === -1) return { error: "unterminated frontmatter block" };
   const data = {};
   let openKey = null; // key whose indented children we are collecting
-  for (const line of text.slice(4, end).split("\n")) {
+  for (const line of joinFlowSequences(text.slice(4, end).split("\n"))) {
     if (!line.trim() || line.trim().startsWith("#")) continue;
     const item = line.match(/^\s+-\s+(.*)$/);
     if (item && openKey) {
@@ -92,7 +114,7 @@ function parseFrontmatter(text) {
       openKey = key;
     } else if (rest.startsWith("[")) {
       const inner = rest.replace(/^\[/, "").replace(/\]\s*$/, "").trim();
-      data[key] = inner === "" ? [] : inner.split(",").map((s) => unquote(s.trim()));
+      data[key] = inner.split(",").map((s) => unquote(s.trim())).filter((s) => s !== "");
       openKey = null;
     } else {
       data[key] = unquote(rest.trim());

@@ -143,12 +143,31 @@ sort -k2 "$NEW_MANIFEST" > "$MANIFEST"
 prev_version="$( [ -f "$VERSION_FILE" ] && cat "$VERSION_FILE" || echo "" )"
 echo "$VERSION" > "$VERSION_FILE"
 
+# Self-updater: toolkit-owned (rewritten on every install, never manifest-tracked).
+# Defaults to the ref this install came from, so pinned installs stay pinned.
+REF_DEFAULT="${VIBE_TOOLKIT_REF:-main}"
+UPDATER="$TARGET/.vibe-toolkit/update"
+cat > "$UPDATER" <<EOSH
+#!/usr/bin/env bash
+# Update vibe-toolkit in this repo by re-running its installer from GitHub.
+# Usage: .vibe-toolkit/update [ref]   (default: $REF_DEFAULT; or set VIBE_TOOLKIT_REF)
+set -euo pipefail
+REPO_ROOT="\$(cd "\$(dirname "\$0")/.." && pwd)"
+REF="\${1:-\${VIBE_TOOLKIT_REF:-$REF_DEFAULT}}"
+curl -fsSL "https://raw.githubusercontent.com/icento/vibe-toolkit/\$REF/install.sh" \\
+  | VIBE_TOOLKIT_REF="\$REF" bash -s -- "\$REPO_ROOT"
+EOSH
+chmod +x "$UPDATER"
+
 # Older installs may keep a locally-modified pre-`check` script — fall back.
+# A lint failure is the target's docs problem, not an install failure: report
+# the install outcome either way, then exit with the lint status.
+lint_status=0
 if grep -q '"check"' "$TARGET/scripts/arch-docs.mjs"; then
-  (cd "$TARGET" && node scripts/arch-docs.mjs check)
+  (cd "$TARGET" && node scripts/arch-docs.mjs check) || lint_status=$?
 else
   echo "note: target's scripts/arch-docs.mjs predates 'check' (kept: modified locally)"
-  (cd "$TARGET" && node scripts/arch-docs.mjs index >/dev/null && node scripts/arch-docs.mjs lint)
+  (cd "$TARGET" && node scripts/arch-docs.mjs index >/dev/null && node scripts/arch-docs.mjs lint) || lint_status=$?
 fi
 
 echo
@@ -160,7 +179,12 @@ echo "installed: $copied copied, $updated updated, $current already current," \
 if [ $((attn + unknown)) -gt 0 ]; then
   echo "review the 'attention' lines above — those files need a manual diff/merge."
 fi
+echo "update later with: .vibe-toolkit/update [ref]"
 echo "next steps:"
 echo "  1. Edit docs/architecture/principles.md — replace the example constraints"
 echo "  2. Fill in docs/architecture/views/{context,containers}.md for your system"
 echo "  3. Start non-trivial work with /vibe-request; use /vibe-adr and /vibe-design for decisions and components"
+if [ "$lint_status" -ne 0 ]; then
+  echo "docs lint failed (errors above) — fix and re-run: node scripts/arch-docs.mjs check"
+fi
+exit "$lint_status"

@@ -31,8 +31,10 @@ git clone --depth 1 https://github.com/icento/vibe-toolkit.git
 ./vibe-toolkit/install.sh /path/to/your-repo
 ```
 
-Re-run either form to upgrade when the toolkit has a new version. Pin a branch or
-tag for the one-liner with `VIBE_TOOLKIT_REF=<ref>`.
+To upgrade an installed repo, run `.vibe-toolkit/update` in it — the installer
+drops that self-updater on every install. It defaults to the ref the repo was
+installed from; pass one (`.vibe-toolkit/update v0.8.0`) or set
+`VIBE_TOOLKIT_REF=<ref>` to switch. Re-running either install form works too.
 
 Idempotent, and upgrade-aware (conffile-style): `.vibe-toolkit/manifest` in the
 target records the sha256 of every file as installed. On re-install, missing files
@@ -68,7 +70,7 @@ design-system/            # tokens.css + components.html + board.css — visual 
 scripts/arch-docs.mjs     # zero-dependency linter + index generator (Node 18+)
 .github/workflows/arch-docs.yml   # CI: lint on PRs touching the docs
 CLAUDE.md                 # gains the architecture contract section
-.vibe-toolkit/            # install manifest + version — powers safe upgrades
+.vibe-toolkit/            # install manifest + version + `update` self-updater
 ```
 
 ## The request workflow

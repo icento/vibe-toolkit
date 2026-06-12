@@ -55,7 +55,7 @@ docs/architecture/
   designs/                # living per-component docs, one concern per file
   requests/               # the request ledger: one dir per tracked request
   _templates/             # adr.md, design.md + request/ lifecycle templates
-design-system/            # tokens.css + components.html — visual truth for all mockups
+design-system/            # tokens.css + components.html + board.css — visual truth for all mockups
 .claude/skills/
   vibe-request/           # /vibe-request — phased workflow orchestrator (see below)
   vibe-adr/               # /vibe-adr  — create a decision record, handle supersession

@@ -2,7 +2,7 @@
 title: UI/UX principles
 summary: Default, testable UI/UX rules — the WCAG 2.2 AA floor plus durable usability heuristics — for every screen, mockup, and frontend in this repository.
 status: current
-date: 2026-06-11
+date: 2026-06-12
 affects: ["design-system/**", "mockups/**"]
 tags: [process, ui]
 ---
@@ -33,6 +33,17 @@ tags: [process, ui]
 - **Labels and help text stay permanently visible** outside the input — placeholder text is never the label.
 - **Validate on blur or submit, never mid-typing.** (Exception: live requirement checklists, e.g. password rules.)
 - **Never ask twice.** Information already entered in the same flow is pre-filled or selectable, not re-typed.
+
+## Layout
+
+- **One dominant region per screen.** The screen's primary purpose gets the most visual weight; everything else is visibly subordinate. Two equal focal points means two purposes — split the screen.
+- **One primary axis.** A screen reads top-to-bottom *or* left-to-right; nested scroll containers are a defect until proven necessary.
+- **Proximity is meaning.** Related elements sit closer than unrelated ones: the gap *between* groups is at least one spacing-scale step larger than the gap *within* them. If grouping needs a divider or box to be visible, try more space first — boxes are the last resort, not the default.
+- **Align to shared edges.** Every element's edge lines up with another's; each new alignment line must earn its place. Near-alignment (off by a few px) reads as a mistake — snap to the spacing scale.
+- **Whitespace is structure.** Separate by space before separating by lines, boxes, or background shifts. Wrapping every element in its own card flattens hierarchy and reads as generic.
+- **Size tracks importance.** Bigger or heavier means more important — never "bigger to fill space." If an element grows, it's because its priority grew.
+- **Bound the measure.** Running text stays between roughly 45 and 90 characters per line (`--size-page-max` enforces this for body type); full-bleed text on wide screens is a defect.
+- **Density is chosen once per view.** Compact for data-dense tables, medium for forms and mixed content, airy for low-complexity or first-run surfaces — and never mixed within one view.
 
 ## Hierarchy & consistency
 

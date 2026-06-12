@@ -14,7 +14,8 @@ model: fable
    font size, spacing, or **layout size** (page max-width, field/column widths)
    inside a mockup — layout geometry is a token too (`--size-page-max`,
    `--size-field`). This is what keeps every screen — and every future frontend —
-   consistent.
+   consistent, and lint enforces it: `node scripts/arch-docs.mjs check` fails on
+   hardcoded colors or px/rem sizes in any mockup screen.
 2. **UX rules.** Every screen follows `docs/architecture/ui-principles.md`:
    data-driven screens show their loading, empty, and error states (mock at least
    the empty and error variants where they matter); forms are single-column with
@@ -25,14 +26,20 @@ model: fable
    project still names its one folder. Like design docs, mockups develop
    continuously: a request edits screens in place or adds new ones — never a
    per-request copy; git history is the archive. Each frontend folder keeps an
-   `index.html` linking every screen; one HTML file per screen; each imports
-   `../../design-system/tokens.css`. Static HTML/CSS only — no frameworks, no
-   build step (a few inline-JS lines for a tab or menu toggle are fine).
+   `index.html` *board*: every screen — including its empty/error state files —
+   rendered live as a scaled iframe tile (styled by `../../design-system/board.css`,
+   stretched-link tile pattern, S/M/L zoom buttons), so the whole frontend is
+   judged at a glance and a missing state is visible immediately. One HTML file
+   per screen; each imports `../../design-system/tokens.css`. Static HTML/CSS
+   only — no frameworks, no build step (a few inline-JS lines for a tab, menu,
+   or the board's zoom are fine; `index.html` is board chrome, exempt from the
+   token lint).
 4. **A/B variants when the user wants to compare styles.** Variants live in
    `mockups/<frontend>/_variants/` as `<screen>--<variant>.html`
    (`dashboard--compact.html`, `dashboard--airy.html`), each a full screen
-   following every rule here, plus a `_variants/index.html` that shows the
-   contenders side by side (iframes) with a one-line rationale per direction.
+   following every rule here, plus a `_variants/index.html` board (same
+   `board.css`) showing the contenders side by side with a one-line rationale
+   per direction.
    A variant needing different visual values overrides tokens in its own
    `<variant>.tokens.css` imported after the base — never inline. Variants are
    mortal: at the alignment gate the user picks one; the winner replaces the

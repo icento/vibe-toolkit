@@ -6,6 +6,9 @@
 //   node scripts/arch-docs.mjs index   regenerate docs/architecture/INDEX.md
 //
 // Override the docs root with ARCH_DOCS_DIR (default: docs/architecture).
+//
+// check/lint also scan mockups/ (override: MOCKUPS_DIR) screen files for
+// hardcoded colors and lengths that bypass design-system/tokens.css.
 
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, relative, sep } from "node:path";
@@ -228,6 +231,49 @@ function validate(docs, errors) {
   }
 }
 
+// ---------- mockup lint ----------
+// Mockup screens take every visual value from design-system/tokens.css; anything
+// that looks like a hardcoded color or length is an error. index.html files are
+// board/navigation chrome (see design-system/board.css) and are exempt.
+
+const MOCKUPS_ROOT = process.env.MOCKUPS_DIR ?? "mockups";
+// Hex not part of an HTML entity (&#8226;) or fragment link (href="#a1b2"),
+// or a color function. Lengths: anything but the 0px/1px hairline values.
+const COLOR_RE = /(?<!&)(?<!href=")#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?|oklch)\(/g;
+const LENGTH_RE = /(?<![\w.-])\d+(?:\.\d+)?(?:px|rem|em)\b/g;
+const LENGTH_OK = new Set(["0px", "1px"]);
+
+function walkMockups(dir) {
+  const out = [];
+  for (const name of readdirSync(dir).sort()) {
+    const path = join(dir, name);
+    if (statSync(path).isDirectory()) out.push(...walkMockups(path));
+    else if (name.endsWith(".html") && name !== "index.html") out.push(path);
+  }
+  return out;
+}
+
+function lintMockups(errors) {
+  if (!existsSync(MOCKUPS_ROOT)) return 0;
+  const screens = walkMockups(MOCKUPS_ROOT);
+  for (const path of screens) {
+    // Blank out HTML comments but keep line numbers stable.
+    const text = readFileSync(path, "utf8")
+      .replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, " "));
+    text.split("\n").forEach((line, i) => {
+      for (const m of line.match(COLOR_RE) ?? []) {
+        errors.push(`${path}:${i + 1}: hardcoded color "${m}" — use a var(--…) token from design-system/tokens.css`);
+      }
+      for (const m of line.match(LENGTH_RE) ?? []) {
+        if (!LENGTH_OK.has(m)) {
+          errors.push(`${path}:${i + 1}: hardcoded length "${m}" — sizes are tokens too (see design-system/tokens.css)`);
+        }
+      }
+    });
+  }
+  return screens.length;
+}
+
 // ---------- index ----------
 
 function posix(p) {
@@ -280,7 +326,10 @@ if (!existsSync(ROOT)) {
 const errors = [];
 const docs = loadDocs(errors);
 validate(docs, errors);
+const screens = lintMockups(errors);
 const index = generateIndex(docs);
+const okMsg = () =>
+  `ok — ${docs.length} doc(s)${screens ? `, ${screens} mockup screen(s)` : ""}, index fresh`;
 
 if (cmd === "index") {
   writeFileSync(INDEX_PATH, index);
@@ -303,7 +352,7 @@ if (cmd === "index") {
     console.error(`\n${errors.length} error(s) across ${docs.length} doc(s)`);
     process.exit(1);
   }
-  console.log(`ok — ${docs.length} doc(s), index fresh`);
+  console.log(okMsg());
 } else if (cmd === "lint") {
   const current = existsSync(INDEX_PATH) ? readFileSync(INDEX_PATH, "utf8") : null;
   if (current !== index) errors.push(`${INDEX_PATH} is stale — run: node scripts/arch-docs.mjs index`);
@@ -312,7 +361,7 @@ if (cmd === "index") {
     console.error(`\n${errors.length} error(s) across ${docs.length} doc(s)`);
     process.exit(1);
   }
-  console.log(`ok — ${docs.length} doc(s), index fresh`);
+  console.log(okMsg());
 } else {
   console.error("usage: node scripts/arch-docs.mjs <check|lint|index>");
   process.exit(1);

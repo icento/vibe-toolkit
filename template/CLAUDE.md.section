@@ -39,11 +39,13 @@ For **every** request, before writing code:
 - QA findings route by class: bug → fix; design-gap → reopen designing;
   scope-change → reopen understanding with the user.
 - UI mockups (`/vibe-mockup`) draw every visual value from `design-system/tokens.css`
-  (new components/tokens go into the design system first, never inlined) and follow
-  `ui-principles.md` — the WCAG 2.2 AA floor plus loading/empty/error-state rules.
-  Mockups are living, one folder per frontend (`mockups/<frontend>/`), edited in
-  place — never copied per request. Style A/B comparisons go in
-  `mockups/<frontend>/_variants/` and are deleted once the user picks a winner.
+  (new components/tokens go into the design system first, never inlined — lint fails
+  hardcoded colors/sizes in `mockups/`) and follow `ui-principles.md` — the WCAG 2.2
+  AA floor plus loading/empty/error-state rules. Mockups are living, one folder per
+  frontend (`mockups/<frontend>/`), edited in place — never copied per request; each
+  folder's `index.html` is a board showing every screen as a scaled live tile. Style
+  A/B comparisons go in `mockups/<frontend>/_variants/`, deleted once the user picks
+  a winner.
 
 Hard rules:
 

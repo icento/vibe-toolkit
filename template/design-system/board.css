@@ -1,0 +1,65 @@
+/* design-system/board.css — shared chrome for mockup screen boards.
+   Each mockups/<frontend>/index.html is a board: every screen rendered live in a
+   scaled iframe tile, click-through to the full screen. Board geometry is defined
+   here once so every frontend's board looks the same; screen mockups themselves
+   never import this file. All visual values come from tokens.css except the
+   board-specific knobs below. */
+
+:root {
+  --board-scale: 0.35;      /* tile zoom — the S/M/L buttons override this */
+  --board-screen-w: 1024px; /* viewport screens render at, before scaling */
+  --board-screen-h: 768px;
+}
+
+.board { padding: var(--space-6) var(--space-5); }
+
+.board-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--space-5); margin-bottom: var(--space-6);
+}
+
+.board-zoom { display: flex; gap: var(--space-1); }
+.board-zoom .btn[aria-pressed="true"] {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.board-grid {
+  display: flex; flex-wrap: wrap;
+  gap: var(--space-6) var(--space-5); align-items: flex-start;
+}
+
+.board-tile { position: relative; margin: 0; }
+.board-tile-name { font-size: var(--text-lg); margin: 0 0 var(--space-1); }
+.board-tile-name a { text-decoration: none; color: var(--color-text); }
+.board-tile-name a:hover { color: var(--color-primary); }
+/* Stretched link: the whole tile is one click target and one tab stop. */
+.board-tile-name a::after { content: ""; position: absolute; inset: 0; }
+.board-tile-note {
+  font-size: var(--text-sm); color: var(--color-text-muted);
+  margin: 0 0 var(--space-2); max-width: calc(var(--board-screen-w) * var(--board-scale));
+}
+
+.board-tile-frame {
+  width: calc(var(--board-screen-w) * var(--board-scale));
+  height: calc(var(--board-screen-h) * var(--board-scale));
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+.board-tile:hover .board-tile-frame { box-shadow: var(--shadow-md); }
+/* Tile-level focus ring (2px matches the global :focus-visible in tokens.css). */
+.board-tile:has(.board-tile-name a:focus-visible) .board-tile-frame {
+  outline: 2px solid var(--color-primary); outline-offset: 2px;
+}
+
+.board-tile-frame iframe {
+  width: var(--board-screen-w); height: var(--board-screen-h);
+  border: 0;
+  transform: scale(var(--board-scale));
+  transform-origin: top left;
+  pointer-events: none; /* clicks fall through to the tile link */
+}

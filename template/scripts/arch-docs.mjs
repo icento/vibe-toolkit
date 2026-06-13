@@ -262,6 +262,14 @@ function validate(docs, errors) {
 // Mockup screens take every visual value from design-system/tokens.css; anything
 // that looks like a hardcoded color or length is an error. index.html files are
 // board/navigation chrome (see design-system/board.css) and are exempt.
+//
+// Escape hatch for values that are intentionally fixed and cannot be tokens —
+// third-party brand marks (the Microsoft logo squares, a Google sign-in button),
+// embedded vendor SVGs — mark them so the lint passes without weakening the rule
+// elsewhere. Put the marker in a comment so it doesn't render:
+//   <div style="background:#F25022">  <!-- arch-docs:allow Microsoft brand mark -->
+// exempts that one line; wrap a block (e.g. an inline logo SVG) with
+//   <!-- arch-docs:allow-start --> … <!-- arch-docs:allow-end -->.
 
 const MOCKUPS_ROOT = process.env.MOCKUPS_DIR ?? "mockups";
 // Hex not part of an HTML entity (&#8226;) or fragment link (href="#a1b2"),
@@ -284,12 +292,18 @@ function lintMockups(errors) {
   if (!existsSync(MOCKUPS_ROOT)) return 0;
   const screens = walkMockups(MOCKUPS_ROOT);
   for (const path of screens) {
+    const raw = readFileSync(path, "utf8").split("\n"); // for allow markers
     // Blank out HTML comments but keep line numbers stable.
     const text = readFileSync(path, "utf8")
       .replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, " "));
+    let suppressed = false; // inside an arch-docs:allow-start/end block
     text.split("\n").forEach((line, i) => {
+      const marker = raw[i]; // markers live in comments, blanked out of `line`
+      if (/arch-docs:allow-end\b/.test(marker)) { suppressed = false; return; }
+      if (/arch-docs:allow-start\b/.test(marker)) { suppressed = true; return; }
+      if (suppressed || /arch-docs:allow\b/.test(marker)) return; // intentionally fixed
       for (const m of line.match(COLOR_RE) ?? []) {
-        errors.push(`${path}:${i + 1}: hardcoded color "${m}" — use a var(--…) token from design-system/tokens.css`);
+        errors.push(`${path}:${i + 1}: hardcoded color "${m}" — use a var(--…) token from design-system/tokens.css (or mark it: <!-- arch-docs:allow … -->)`);
       }
       for (const m of line.match(LENGTH_RE) ?? []) {
         if (!LENGTH_OK.has(m)) {

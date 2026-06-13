@@ -42,7 +42,12 @@ model: fable
    inside a mockup — layout geometry is a token too (`--size-page-max`,
    `--size-field`). This is what keeps every screen — and every future frontend —
    consistent, and lint enforces it: `node scripts/arch-docs.mjs check` fails on
-   hardcoded colors or px/rem sizes in any mockup screen.
+   hardcoded colors or px/rem sizes in any mockup screen. The rare exception is a
+   value that *cannot* be a token because it is fixed by a third party — a brand
+   mark (the Microsoft logo squares, a Google sign-in button), an embedded vendor
+   SVG. Never theme those; mark them so lint passes:
+   `<!-- arch-docs:allow Microsoft brand mark -->` exempts that line, and
+   `<!-- arch-docs:allow-start --> … <!-- arch-docs:allow-end -->` exempts a block.
 3. **UX rules.** Every screen follows `docs/architecture/ui-principles.md`:
    data-driven screens show their loading, empty, and error states (mock at least
    the empty and error variants where they matter); forms are single-column with

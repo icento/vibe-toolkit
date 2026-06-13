@@ -5,7 +5,7 @@ summary: <one line for the index — what was decided and why it matters>
 status: proposed
 date: YYYY-MM-DD
 supersedes: []
-affects: []
+affects: ["services/api/**", "packages/ui/src/**"]
 tags: []
 ---
 

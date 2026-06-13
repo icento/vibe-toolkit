@@ -3,7 +3,7 @@ title: <component name>
 summary: <one line for the index — what this component is for>
 status: draft
 date: YYYY-MM-DD
-affects: []
+affects: ["services/api/**", "packages/ui/src/**"]
 tags: []
 ---
 

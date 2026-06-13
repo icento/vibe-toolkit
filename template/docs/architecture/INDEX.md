@@ -5,7 +5,7 @@
 ## Principles
 
 - [Engineering principles](principles.md) — Non-negotiable constraints, derived from Tiger Style, that apply to every change in this repository.
-- [Engineering style (Tiger Style, compacted)](style.md) — Default coding style for all code in this repo — safety, performance, developer experience, in that order. Compacted from TigerBeetle's TIGER_STYLE.
+- [Engineering style (Tiger Style + design heuristics, compacted)](style.md) — Default coding style for all code in this repo — safety, performance, developer experience, in that order. Compacted from TigerBeetle's TIGER_STYLE, plus module/interface design heuristics distilled from Ousterhout's A Philosophy of Software Design.
 - [UI/UX principles](ui-principles.md) — Default, testable UI/UX rules — the WCAG 2.2 AA floor plus durable usability heuristics — for every screen, mockup, and frontend in this repository.
 
 ## Views

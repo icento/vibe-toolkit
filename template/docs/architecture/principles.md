@@ -2,7 +2,7 @@
 title: Engineering principles
 summary: Non-negotiable constraints, derived from Tiger Style, that apply to every change in this repository.
 status: current
-date: 2026-06-11
+date: 2026-06-13
 affects: ["**"]
 tags: [process]
 ---
@@ -20,4 +20,6 @@ tags: [process]
 - **Handle every error.** Swallowed exceptions and ignored return values do not merge, and error paths get tests like happy paths do.
 - **Crash on violated invariants.** Code that detects an impossible state stops there; it never patches over the state and continues.
 - **Design before build.** Non-trivial work starts with a design doc and a back-of-envelope resource sketch (network → disk → memory → CPU), not with code.
+- **Deep modules, not shallow.** A new module, class, or function earns its interface by hiding real work; a wrapper that mostly forwards calls, or a parameter that just passes through, gets collapsed — not merged (details in [style.md](style.md)).
+- **One decision, one place.** A single design decision spread across multiple modules — the same constant, rule, or shape repeated — is leakage and the root of change amplification; consolidate it, or generate the copies so they can't drift.
 - **Docs move with the code.** A change that alters a component's purpose, interface, or internals updates its design doc or ADR in the same PR.

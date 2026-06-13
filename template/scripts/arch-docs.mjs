@@ -19,16 +19,24 @@ const ROOT = process.env.ARCH_DOCS_DIR ?? "docs/architecture";
 const INDEX_PATH = join(ROOT, "INDEX.md");
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
-const STATUSES = {
-  adr: ["proposed", "accepted", "superseded", "deprecated"],
-  design: ["draft", "current", "archived"],
-  view: ["draft", "current", "archived"],
-  principles: ["draft", "current", "archived"],
-  request: ["open", "in-progress", "done", "deferred", "declined"],
-};
 const PHASES = ["understanding", "designing", "aligning", "planning", "implementing", "qa", "delivered"];
 const SIZES = ["S", "M", "L"];
 const GATES = ["understanding", "design"];
+const PRINCIPLES_FILES = ["principles.md", "style.md", "ui-principles.md"];
+
+// One descriptor per indexed doc type — the single source for what a type is.
+// `locate(parts, rel)` decides classification from the path; `statuses` is the
+// status enum lint accepts; `validate` (optional) runs the type's extra checks.
+// Adding a doc type is one entry here, not edits scattered across the file.
+// (Validators are function declarations below — hoisted, so referencing them
+// here is fine; cross-document passes stay in validate(), not in these.)
+const DOC_TYPES = {
+  adr:        { statuses: ["proposed", "accepted", "superseded", "deprecated"], locate: (p) => p[0] === "adr", validate: validateAdr },
+  design:     { statuses: ["draft", "current", "archived"], locate: (p) => p[0] === "designs", validate: validateDesign },
+  view:       { statuses: ["draft", "current", "archived"], locate: (p) => p[0] === "views" },
+  request:    { statuses: ["open", "in-progress", "done", "deferred", "declined"], locate: (p) => p[0] === "requests" && p[p.length - 1] === "request.md", validate: validateRequest },
+  principles: { statuses: ["draft", "current", "archived"], locate: (_p, rel) => PRINCIPLES_FILES.includes(rel) },
+};
 
 // ---------- collection ----------
 
@@ -45,19 +53,21 @@ function walk(dir) {
   return out;
 }
 
-function docType(relPath) {
+// Classify a doc path into one of three outcomes — no sentinel strings:
+//   { type }    an indexed doc, validated and listed in INDEX.md
+//   { skip }    a recognized but non-indexed file, ignored without complaint
+//   { unknown } a stray file in no known location, reported as an error
+function classify(relPath) {
   const parts = relPath.split(sep);
-  if (parts[0] === "adr") return "adr";
-  if (parts[0] === "designs") return "design";
-  if (parts[0] === "views") return "view";
-  // In a request dir only request.md is the indexed record; understanding.md,
-  // plan.md, qa-report.md are free-form phase artifacts.
-  if (parts[0] === "requests") return parts[parts.length - 1] === "request.md" ? "request" : "ignore";
-  // data/*.md are generated from *.schema.json — validated by the data pipeline,
-  // not as frontmatter docs (orphans without a schema sibling fail there).
-  if (parts[0] === "data") return "ignore";
-  if (relPath === "principles.md" || relPath === "style.md" || relPath === "ui-principles.md") return "principles";
-  return null;
+  for (const [type, spec] of Object.entries(DOC_TYPES)) {
+    if (spec.locate(parts, relPath)) return { type };
+  }
+  // Recognized-but-not-indexed, governed elsewhere: a request dir's free-form
+  // phase artifacts (understanding.md, plan.md, qa-report.md — only request.md
+  // is indexed) and data/*.md generated from *.schema.json (the data pipeline
+  // validates those; orphans without a schema sibling fail there).
+  if (parts[0] === "requests" || parts[0] === "data") return { skip: true };
+  return { unknown: true };
 }
 
 // ---------- frontmatter (minimal YAML subset: scalars, [flow]/dashed lists, one-level maps) ----------
@@ -135,10 +145,10 @@ function loadDocs(errors) {
   const docs = [];
   for (const path of walk(ROOT)) {
     const rel = relative(ROOT, path);
-    const type = docType(rel);
-    if (type === "ignore") continue;
-    if (!type) {
-      errors.push(`${path}: unexpected location — docs live in adr/, designs/, views/, requests/, data/, principles.md, style.md, or ui-principles.md`);
+    const c = classify(rel);
+    if (c.skip) continue;
+    if (c.unknown) {
+      errors.push(`${path}: unexpected location — docs live in adr/, designs/, views/, requests/, data/, ${PRINCIPLES_FILES.join(", ")}`);
       continue;
     }
     const { data, error } = parseFrontmatter(readFileSync(path, "utf8"));
@@ -146,7 +156,7 @@ function loadDocs(errors) {
       errors.push(`${path}: ${error}`);
       continue;
     }
-    docs.push({ path, rel, type, fm: data });
+    docs.push({ path, rel, type: c.type, fm: data });
   }
   return docs;
 }
@@ -163,6 +173,25 @@ function approvalsOf(fm, path, errors) {
     if (!DATE_RE.test(date)) errors.push(`${path}: approvals.${gate} must be YYYY-MM-DD, got "${date}"`);
   }
   return a;
+}
+
+function validateAdr({ path, rel, fm }, ids, errors) {
+  if (!/^ADR-\d{4}$/.test(fm.id ?? "")) {
+    errors.push(`${path}: ADRs need id matching ADR-NNNN, got "${fm.id}"`);
+  } else {
+    const num = fm.id.slice(4);
+    if (!rel.startsWith(join("adr", num))) errors.push(`${path}: filename must start with "${num}-" to match ${fm.id}`);
+    if (ids.has(fm.id)) errors.push(`${path}: duplicate id ${fm.id} (also in ${ids.get(fm.id)})`);
+    ids.set(fm.id, path);
+  }
+  if (!Array.isArray(fm.affects)) errors.push(`${path}: "affects" must be a list of code path globs`);
+  if (fm.supersedes !== undefined && !Array.isArray(fm.supersedes)) errors.push(`${path}: "supersedes" must be a list`);
+}
+
+function validateDesign({ path, fm }, _ids, errors) {
+  if (!Array.isArray(fm.affects)) {
+    errors.push(`${path}: design docs need "affects" — the code path globs this design covers`);
+  }
 }
 
 function validateRequest({ path, rel, fm }, ids, errors) {
@@ -206,30 +235,16 @@ function validateRequest({ path, rel, fm }, ids, errors) {
 function validate(docs, errors) {
   const ids = new Map();
   for (const doc of docs) {
-    const { path, rel, type, fm } = doc;
+    const { path, type, fm } = doc;
+    const spec = DOC_TYPES[type];
     for (const field of ["title", "summary", "status", "date"]) {
       if (!fm[field] || typeof fm[field] !== "string") errors.push(`${path}: missing required field "${field}"`);
     }
     if (fm.date && !DATE_RE.test(fm.date)) errors.push(`${path}: date must be YYYY-MM-DD, got "${fm.date}"`);
-    if (fm.status && typeof fm.status === "string" && !STATUSES[type].includes(fm.status)) {
-      errors.push(`${path}: status "${fm.status}" not in [${STATUSES[type].join(", ")}] for ${type} docs`);
+    if (fm.status && typeof fm.status === "string" && !spec.statuses.includes(fm.status)) {
+      errors.push(`${path}: status "${fm.status}" not in [${spec.statuses.join(", ")}] for ${type} docs`);
     }
-    if (type === "adr") {
-      if (!/^ADR-\d{4}$/.test(fm.id ?? "")) {
-        errors.push(`${path}: ADRs need id matching ADR-NNNN, got "${fm.id}"`);
-      } else {
-        const num = fm.id.slice(4);
-        if (!rel.startsWith(join("adr", num))) errors.push(`${path}: filename must start with "${num}-" to match ${fm.id}`);
-        if (ids.has(fm.id)) errors.push(`${path}: duplicate id ${fm.id} (also in ${ids.get(fm.id)})`);
-        ids.set(fm.id, path);
-      }
-      if (!Array.isArray(fm.affects)) errors.push(`${path}: "affects" must be a list of code path globs`);
-      if (fm.supersedes !== undefined && !Array.isArray(fm.supersedes)) errors.push(`${path}: "supersedes" must be a list`);
-    }
-    if (type === "design" && !Array.isArray(fm.affects)) {
-      errors.push(`${path}: design docs need "affects" — the code path globs this design covers`);
-    }
-    if (type === "request") validateRequest(doc, ids, errors);
+    spec.validate?.(doc, ids, errors); // per-type checks; cross-document passes run below
   }
 
   // Supersession must be consistent in both directions.
@@ -705,6 +720,11 @@ function posix(p) {
   return p.split(sep).join("/");
 }
 
+// `affects` should be a list; the validators report it when it isn't. The index
+// must still render in that pass — a non-array here would otherwise throw during
+// generation, before the user ever sees the clean validation error.
+const affectsList = (o) => (Array.isArray(o.affects) ? o.affects : []);
+
 function generateIndex(docs, schemas) {
   const section = (title, items, render) => {
     const lines = [`## ${title}`, ""];
@@ -733,12 +753,12 @@ function generateIndex(docs, schemas) {
     section("Decisions", adrs, (d) => `- **${d.fm.id}** ${link(d)} (${d.fm.status}) — ${d.fm.summary}`),
     "",
     section("Designs", designs, (d) =>
-      `- ${link(d)} (${d.fm.status}) — affects \`${(d.fm.affects ?? []).join("`, `") || "—"}\` — ${d.fm.summary}`),
+      `- ${link(d)} (${d.fm.status}) — affects \`${affectsList(d.fm).join("`, `") || "—"}\` — ${d.fm.summary}`),
     "",
     section("Data", data.length ? [null, ...data] : [], (s) =>
       s === null
         ? "- [Relationship diagram](data/index.html) — every entity and relationship, by database"
-        : `- [${s.raw.title}](${posix(s.rel)}) (${s.raw.status}) — db \`${s.raw.database}\` (${s.raw.engine}) — affects \`${(s.raw.affects ?? []).join("`, `") || "—"}\` — ${s.raw.summary}`),
+        : `- [${s.raw.title}](${posix(s.rel)}) (${s.raw.status}) — db \`${s.raw.database}\` (${s.raw.engine}) — affects \`${affectsList(s.raw).join("`, `") || "—"}\` — ${s.raw.summary}`),
     "",
     section("Requests", requests, (d) =>
       `- **${d.fm.id}** ${link(d)} (${d.fm.status} · ${d.fm.phase} · ${d.fm.size}) — ${d.fm.summary}`),

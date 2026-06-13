@@ -1,8 +1,8 @@
 ---
-title: Engineering style (Tiger Style, compacted)
-summary: Default coding style for all code in this repo — safety, performance, developer experience, in that order. Compacted from TigerBeetle's TIGER_STYLE.
+title: Engineering style (Tiger Style + design heuristics, compacted)
+summary: Default coding style for all code in this repo — safety, performance, developer experience, in that order. Compacted from TigerBeetle's TIGER_STYLE, plus module/interface design heuristics distilled from Ousterhout's A Philosophy of Software Design.
 status: current
-date: 2026-06-11
+date: 2026-06-13
 affects: ["**"]
 tags: [style, process]
 ---
@@ -16,6 +16,21 @@ deviations for this project are edited in here, reversals of a rule get an ADR.
 - **Safety, then performance, then developer experience.** Readability is table stakes, not the goal.
 - Simplicity is the hardest revision, not the first attempt — invest in design upfront; a day of design saves weeks in production.
 - **Zero technical debt:** incomplete features are acceptable; what ships must be correct. Problems are cheapest to fix in the design phase.
+
+## Design — modules & interfaces
+
+Distilled, in our own words, from John Ousterhout's *A Philosophy of Software Design* — the heuristics for the moments that have structure (a new component, an ADR, a boundary). The priority order above still wins on conflict.
+
+- **Minimize complexity, defined concretely.** Complexity shows up as *change amplification* (one decision forces edits in many places), *cognitive load* (how much you must hold in your head to change something safely), and *unknown-unknowns* (you can't even tell what you'd need to know). The last is the worst — design to eliminate it.
+- **Deep modules over shallow ones.** A module's worth is its functionality minus its interface. The best hide substantial implementation behind a simple interface; a class that mostly forwards calls is *shallow* — it adds surface without hiding anything. Prefer fewer deep modules to many thin ones.
+- **Information hiding, not leakage.** Each module encapsulates one design decision. The same decision reflected across several modules is *leakage* — the root cause of change amplification. When you can't share the code (a prose contract, a second language), generate the copies so they can't drift.
+- **Pull complexity downward.** Better the implementer of a module absorbs complexity once than every caller carry it. A new config knob pushes a decision up to every caller — only add one when you genuinely can't pick a good default.
+- **Define errors out of existence.** Prefer interfaces where the exceptional case can't arise over ones that make every caller handle it. Fewer special cases, less complexity.
+- **General-purpose tends to be deeper.** A slightly general interface is often simpler *and* more reusable than one tailored to exactly today's need — don't over-specialize the boundary.
+- **Different layer, different abstraction.** Adjacent layers with the same abstraction — pass-through methods, pass-through variables — signal a missing or misplaced boundary. Each layer earns its place by adding value.
+- **Design it twice.** Sketch at least two structurings before committing; the comparison is where the better one comes from. Do it in the design doc or ADR — the cheapest review point — not in code.
+- **Comments capture what code can't:** design intent and the *why*. If you can't describe an interface simply in a comment, the design is probably wrong. (Implementation-comment rules are below.)
+- **Strategic over tactical.** "Just make it work" accrues complexity debt that compounds; spend the small amount extra now to keep the design clean. Consistency and obviousness are features — they lower every future reader's cognitive load.
 
 ## Safety
 

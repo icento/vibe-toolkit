@@ -50,7 +50,7 @@ in `CLAUDE.md` (marker-guarded) follows the same rules. After installing, custom
 docs/architecture/
   INDEX.md                # generated index — the agent's cheap recall layer
   principles.md           # non-negotiable constraints, read once per session
-  style.md                # default engineering style (Tiger Style, compacted)
+  style.md                # default engineering style (Tiger Style + APoSD design heuristics, compacted)
   ui-principles.md        # default UI/UX rules — WCAG 2.2 AA floor + NN/g heuristics
   views/                  # C4 context + containers (mermaid, never images)
   adr/                    # immutable decision records (ADR-0001/0002 ship as seeds)
@@ -140,4 +140,6 @@ it is the toolkit itself.
 
 MIT. The bundled style guide (`template/docs/architecture/style.md`) is compacted
 from TigerBeetle's [TIGER_STYLE.md](https://github.com/tigerbeetle/tigerbeetle/blob/main/docs/TIGER_STYLE.md)
-(Apache-2.0), with attribution in the file.
+(Apache-2.0), with attribution in the file. Its "Design — modules & interfaces"
+section is an original distillation, in our own words, of the ideas in John
+Ousterhout's *A Philosophy of Software Design* (no text is reproduced from the book).

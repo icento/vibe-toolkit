@@ -18,4 +18,9 @@ Rules for changing this repo:
   `cd template && node scripts/arch-docs.mjs check`
 - After changing `install.sh` or the script, smoke-test: install into a temp dir and
   run lint there.
+- After changing `template/scripts/arch-docs.mjs`, run its tests: `node --test
+  test/arch-docs.test.mjs`. They are black-box (spawn the script against throwaway
+  fixtures) and toolkit-only — they live outside `template/`, so they never ship to
+  target repos. The suite also guards the script's `PHASES`/`SIZES` enums against the
+  prose that documents them (README diagram, `CLAUDE.md.section`).
 - Keep README.md's "What gets installed" tree in sync with `template/`.

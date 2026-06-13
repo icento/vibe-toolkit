@@ -9,6 +9,9 @@
 #   - file modified by the target's team    -> never touched; warned when an update exists
 #   - file present but never recorded       -> adopted if identical to the current toolkit,
 #                                              otherwise warned (pre-manifest installs)
+#   - toolkit-owned machinery (ALWAYS_OVERWRITE) -> force-synced every install,
+#                                              ignoring local edits and manifest state,
+#                                              so old/pre-manifest installs self-heal
 # docs/architecture/INDEX.md is generated in the target and is only copied when missing.
 set -euo pipefail
 
@@ -52,6 +55,19 @@ recorded_hash() { # $1 = rel path; prints the as-installed hash, empty if none
   [ -f "$MANIFEST" ] && awk -v r="$1" '$2 == r { print $1 }' "$MANIFEST" || true
 }
 
+# Toolkit-owned machinery: rel paths force-synced to the current toolkit on every
+# install, regardless of local edits or manifest state. These files are vendored
+# verbatim and must never be hand-edited (see CLAUDE.md for the script), so this is
+# how old and pre-manifest installs heal instead of being stranded on an 'attention'
+# warning forever. Keep ONLY files the target team is never expected to customize —
+# never list docs, principles, style, or design tokens here. case patterns allowed.
+is_always_overwrite() { # $1 = rel path; 0 if force-synced, 1 otherwise
+  case "$1" in
+    scripts/arch-docs.mjs) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 copied=0; updated=0; current=0; kept=0; attn=0; unknown=0
 
 while IFS= read -r src_file; do
@@ -72,6 +88,22 @@ while IFS= read -r src_file; do
   case "$rel" in docs/architecture/INDEX.md) continue ;; esac
 
   cur_hash="$(hash_file "$dest")"
+
+  # Toolkit-owned machinery wins unconditionally — no manifest check, no local-edit
+  # guard. This is the self-heal path for files that drifted or were never recorded.
+  if is_always_overwrite "$rel"; then
+    if [ "$cur_hash" = "$new_hash" ]; then
+      echo "$new_hash $rel" >> "$NEW_MANIFEST"
+      current=$((current + 1))
+    else
+      cp "$src_file" "$dest"
+      echo "$new_hash $rel" >> "$NEW_MANIFEST"
+      echo "updated:     $rel (toolkit-owned)"
+      updated=$((updated + 1))
+    fi
+    continue
+  fi
+
   rec_hash="$(recorded_hash "$rel")"
 
   if [ -z "$rec_hash" ]; then

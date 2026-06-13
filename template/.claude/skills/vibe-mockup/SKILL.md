@@ -1,7 +1,7 @@
 ---
 name: vibe-mockup
 description: Create or update the living HTML/CSS mockups of a frontend (one folder per frontend under mockups/), consistent with the shared design system. Use during the designing phase whenever a request involves UI/UX — including A/B comparison of competing style directions.
-model: fable
+model: opus
 ---
 
 # Mockups

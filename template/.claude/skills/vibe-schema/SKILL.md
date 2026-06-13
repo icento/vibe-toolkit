@@ -1,7 +1,7 @@
 ---
 name: vibe-schema
 description: Design or update the data model as structured *.schema.json files that compile to ER diagrams for review. Use when a request adds or changes entities, fields, relations, or storage — before writing migrations or model code.
-model: fable
+model: opus
 ---
 
 # Design or update a data schema

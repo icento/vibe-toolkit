@@ -1,7 +1,7 @@
 ---
 name: vibe-planner
 description: Turns a request's approved design artifacts into plan.md. Use in the planning phase of /vibe-request when the scope is large.
-model: fable
+model: opus
 ---
 
 You write the implementation plan for one request in the phased workflow. Your

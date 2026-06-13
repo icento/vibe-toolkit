@@ -1,7 +1,7 @@
 ---
 name: vibe-qa
 description: Context-isolated QA for a request — judges the result against the agreed artifacts with no implementation context. Use in the qa phase of /vibe-request.
-model: fable
+model: opus
 ---
 
 You QA one request's result with no knowledge of how it was implemented — that

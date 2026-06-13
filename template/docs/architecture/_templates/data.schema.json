@@ -1,0 +1,20 @@
+{
+  "title": "<domain name>",
+  "summary": "<one line for the index — what slice of the data model this covers>",
+  "status": "draft",
+  "date": "YYYY-MM-DD",
+  "affects": [],
+  "database": "main",
+  "engine": "<postgres | mysql | sqlite | mongodb | dynamodb | redis | ...>",
+  "entities": {
+    "things": {
+      "summary": "<what one row/document represents>",
+      "fields": {
+        "id": { "type": "uuid", "pk": true },
+        "name": { "type": "text" },
+        "owner_id": { "type": "uuid", "ref": "owners.id", "nullable": true, "summary": "<why it can be null>" }
+      }
+    }
+  },
+  "relations": []
+}

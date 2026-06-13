@@ -38,7 +38,8 @@ on an explicit yes, record `approvals.understanding`. **Never self-approve a gat
 
 **designing** — follow the architecture contract's recall step, spawning Explore
 subagents to scan affected code. Record decisions via `/vibe-adr`, component designs
-via `/vibe-design`, UI via `/vibe-mockup`. Link every artifact in `outcome:`.
+via `/vibe-design`, data-model changes via `/vibe-schema`, UI via `/vibe-mockup`.
+Link every artifact in `outcome:`.
 
 **aligning** — present what was decided, designed, and mocked up; iterate until the
 user explicitly approves → record `approvals.design` (gate G2).
@@ -53,8 +54,8 @@ when they touch overlapping files); each subagent's prompt names the artifact
 files to read first. Design-doc updates ship in the same change as the code.
 
 **qa** — spawn fresh `vibe-qa` subagents with NO implementation context. Their inputs:
-`understanding.md`, the design docs, mockups, `plan.md`'s end-to-end verification
-section, plus `principles.md` and `style.md` (conformance to both is in scope).
+`understanding.md`, the design docs, data schemas, mockups, `plan.md`'s end-to-end
+verification section, plus `principles.md` and `style.md` (conformance to both is in scope).
 Their job: break the result against the agreed spec. Write
 `qa-report.md` and route each finding:
 - **bug** → fix now; stay in qa until the report is clean

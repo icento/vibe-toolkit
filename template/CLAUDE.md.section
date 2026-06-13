@@ -3,7 +3,8 @@
 
 Design knowledge lives in `docs/architecture/` — `INDEX.md` (generated index),
 `principles.md` (non-negotiables), `views/` (C4 context/containers), `adr/`
-(immutable decision records), `designs/` (living per-component docs).
+(immutable decision records), `designs/` (living per-component docs), `data/`
+(the data model as `*.schema.json` + generated ER diagrams).
 
 For **every** request, before writing code:
 
@@ -46,6 +47,9 @@ For **every** request, before writing code:
   folder's `index.html` is a board showing every screen as a scaled live tile. Style
   A/B comparisons go in `mockups/<frontend>/_variants/`, deleted once the user picks
   a winner.
+- Data-model changes go through `/vibe-schema`: edit `docs/architecture/data/*.schema.json`
+  (the only hand-edited files there) — `check` rebuilds `data/index.html` (the ER
+  diagram users review) and validates refs.
 
 Hard rules:
 

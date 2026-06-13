@@ -8,8 +8,9 @@ You write the implementation plan for one request in the phased workflow. Your
 prompt names the request directory (`docs/architecture/requests/<NNNN-slug>/`).
 
 1. Read the artifacts first — `understanding.md`, `request.md`, the design docs,
-   ADRs, and mockups linked from its `outcome:`. They are the spec; do not
-   re-derive or second-guess approved decisions.
+   ADRs, data schemas (`data/*.schema.json`), and mockups linked from its
+   `outcome:`. They are the spec; do not re-derive or second-guess approved
+   decisions.
 2. Fill `plan.md` from `docs/architecture/_templates/request/plan.md`: ordered
    tasks, each sized to fit one agent's context, naming the files it touches,
    its dependencies on other tasks, and a concrete verification step. Mark which

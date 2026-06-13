@@ -55,8 +55,9 @@ docs/architecture/
   views/                  # C4 context + containers (mermaid, never images)
   adr/                    # immutable decision records (ADR-0001/0002 ship as seeds)
   designs/                # living per-component docs, one concern per file
+  data/                   # the data model: *.schema.json → generated interactive diagram
   requests/               # the request ledger: one dir per tracked request
-  _templates/             # adr.md, design.md + request/ lifecycle templates
+  _templates/             # adr.md, design.md, data.schema.json + request/ lifecycle templates
 design-system/            # tokens.css + components.html + board.css — visual truth for all mockups
   shadcn-bridge.css       # forwards tokens to shadcn/Basecoat variables (theming bridge)
   themes/                 # preset aesthetic directions + showcase board — pick one on first UI work
@@ -64,6 +65,7 @@ design-system/            # tokens.css + components.html + board.css — visual 
   vibe-request/           # /vibe-request — phased workflow orchestrator (see below)
   vibe-adr/               # /vibe-adr  — create a decision record, handle supersession
   vibe-design/            # /vibe-design — create/update a component design doc
+  vibe-schema/            # /vibe-schema — structured data schemas → generated ER diagrams
   vibe-mockup/            # /vibe-mockup — static HTML/CSS mockups on the design system
 .claude/agents/
   vibe-planner.md         # planning subagent (fable) — turns the approved design into plan.md
@@ -88,8 +90,9 @@ understanding → designing → aligning → planning → implementing → qa �
 - **Triage scales the ceremony**: size S skips straight to implement + QA; M adds
   design and gate G2; L runs everything including mockups and both gates.
 - **Artifacts are the interface**: each phase reads/writes files
-  (`understanding.md`, design docs, mockups, `plan.md`, `qa-report.md`), so work
-  resumes across sessions and subagents are pointed at paths, not chat history.
+  (`understanding.md`, design docs, data schemas, mockups, `plan.md`,
+  `qa-report.md`), so work resumes across sessions and subagents are pointed at
+  paths, not chat history.
 - **Gates are lint-enforced**: a request whose `phase` crossed a gate without a
   recorded user approval fails `arch-docs.mjs lint`.
 - **QA is context-isolated**: fresh agents judge the result against the agreed
@@ -97,7 +100,8 @@ understanding → designing → aligning → planning → implementing → qa �
 - **Backward transitions are normal** — QA reopening design is the process working.
 - **Models are routed by judgment, not uniformly**: the phases where quality
   compounds run on the strongest model (`fable` — the `/vibe-design`,
-  `/vibe-adr`, and `/vibe-mockup` skills, the planner and QA subagents) while
+  `/vibe-adr`, `/vibe-schema`, and `/vibe-mockup` skills, the planner and QA
+  subagents) while
   execution runs on `opus` (the implementer subagent). Pins use aliases, never dated model ids, so
   installed repos track current models. Override everything with the
   `CLAUDE_CODE_SUBAGENT_MODEL` env var, or edit the `model:` frontmatter in
@@ -114,9 +118,18 @@ node scripts/arch-docs.mjs index   # regenerate docs/architecture/INDEX.md
 
 Lint enforces: required fields (`title`, `summary`, `status`, `date`), status enums,
 `ADR-NNNN` ids matching filenames, `supersedes` targets existing **and** carrying
-`status: superseded`, gate approvals matching each request's phase, and a non-stale
-index. The index embeds request status/phase, so request records re-index often —
-`check` exists so that can never be forgotten.
+`status: superseded`, gate approvals matching each request's phase, and non-stale
+generated artifacts. The index embeds request status/phase, so request records
+re-index often — `check` exists so that can never be forgotten.
+
+The data model is part of the same loop: `docs/architecture/data/*.schema.json`
+holds entities, fields, and relations as structured JSON (one file per domain, each
+declaring its `database` + `engine` — multiple databases coexist, but refs never
+cross one). `check` validates shape and referential integrity across files, then
+compiles the whole model to `data/index.html` — a self-contained, interactive
+relationship diagram (no libraries, no network): filter tables by typing, click one
+to focus on it and its neighbors, hover to trace edges. It is never hand-edited;
+lint fails when it drifts from the schemas.
 
 ## Repo layout
 

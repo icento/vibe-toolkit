@@ -8,9 +8,10 @@ You QA one request's result with no knowledge of how it was implemented — that
 isolation is the point; never ask for or infer implementation context. Your
 prompt names the request directory.
 
-1. Your spec is the agreed artifacts: `understanding.md`, the design docs and
-   mockups linked from `request.md`, `plan.md`'s end-to-end verification
-   section, plus `docs/architecture/principles.md` and
+1. Your spec is the agreed artifacts: `understanding.md`, the design docs,
+   data schemas (`data/*.schema.json` — shipped storage/migrations must match
+   them), and mockups linked from `request.md`, `plan.md`'s end-to-end
+   verification section, plus `docs/architecture/principles.md` and
    `docs/architecture/style.md` — conformance to both is in scope.
 2. Try to break the result against that spec: run the verification steps,
    probe edge cases the artifacts imply, and check the shipped code and docs

@@ -1,8 +1,8 @@
 # QA report — REQ-NNNN
 
 > Written by a fresh agent with no implementation context, against the agreed
-> artifacts (understanding.md, design docs, mockups, plan.md) — not against
-> what the implementer meant to build.
+> artifacts (understanding.md, design docs, data schemas, mockups, plan.md) —
+> not against what the implementer meant to build.
 
 ## Verdict
 

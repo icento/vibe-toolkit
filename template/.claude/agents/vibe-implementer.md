@@ -13,7 +13,9 @@ request directory, the task, and the artifact files to read first.
    and `docs/architecture/style.md`. If the plan turns out to be wrong or
    incomplete, stop and report the gap instead of improvising around it.
 3. If the change alters what a design doc describes, update that doc in the
-   same change — code and docs ship atomically.
+   same change — code and docs ship atomically. Same for the data model:
+   migrations/model code ship with the matching `data/*.schema.json` edit,
+   and `node scripts/arch-docs.mjs check` must pass.
 4. Run the task's verification step and quote its result.
 
 Your final message: files changed, the verification output, and any deviation

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Theme showcase — pick a direction</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="../board.css">
+  <style>
+    /* Gallery pages are tall — show more of each than a mockup board would. */
+    :root { --board-screen-h: 1280px; --board-scale: 0.3; }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <header class="board-header">
+      <div>
+        <h1>Theme showcase</h1>
+        <p class="help" style="max-width: var(--size-page-max)">
+          Each tile is the live component gallery rendered under one preset
+          direction. Pick one — or use them to describe your own — before a
+          frontend's first screens; the winner's values fold into
+          <code>tokens.css</code> (the /vibe-mockup skill drives this). Presets
+          stay here for future re-theming. Components and UX rules are shared;
+          only the point of view changes.
+        </p>
+      </div>
+      <div class="board-zoom" role="group" aria-label="Tile zoom">
+        <button class="btn" data-scale="0.22">S</button>
+        <button class="btn" data-scale="0.3" aria-pressed="true">M</button>
+        <button class="btn" data-scale="0.45">L</button>
+      </div>
+    </header>
+
+    <div class="board-grid">
+      <figure class="board-tile">
+        <h2 class="board-tile-name"><a href="../components.html">Starter</a></h2>
+        <p class="board-tile-note">The neutral out-of-the-box default — a placeholder to replace, kept here for comparison.</p>
+        <div class="board-tile-frame"><iframe src="../components.html" title="Starter theme" loading="lazy"></iframe></div>
+      </figure>
+
+      <figure class="board-tile">
+        <h2 class="board-tile-name"><a href="../components.html?theme=editorial">Editorial</a></h2>
+        <p class="board-tile-note">Paper and ink under a serif display, deep-green accent — for products that should read like print.</p>
+        <div class="board-tile-frame"><iframe src="../components.html?theme=editorial" title="Editorial theme" loading="lazy"></iframe></div>
+      </figure>
+
+      <figure class="board-tile">
+        <h2 class="board-tile-name"><a href="../components.html?theme=midnight">Midnight</a></h2>
+        <p class="board-tile-note">Dark slate with an ice-blue accent — for dense, focused, evening-friendly tools.</p>
+        <div class="board-tile-frame"><iframe src="../components.html?theme=midnight" title="Midnight theme" loading="lazy"></iframe></div>
+      </figure>
+
+      <figure class="board-tile">
+        <h2 class="board-tile-name"><a href="../components.html?theme=soft">Soft</a></h2>
+        <p class="board-tile-note">Rounded, airy, plum accent on a cool ground — for approachable consumer surfaces.</p>
+        <div class="board-tile-frame"><iframe src="../components.html?theme=soft" title="Soft theme" loading="lazy"></iframe></div>
+      </figure>
+
+      <figure class="board-tile">
+        <h2 class="board-tile-name"><a href="../components.html?theme=utility">Utility</a></h2>
+        <p class="board-tile-note">Monochrome, square corners, mono headings — instrument-panel utilitarianism.</p>
+        <div class="board-tile-frame"><iframe src="../components.html?theme=utility" title="Utility theme" loading="lazy"></iframe></div>
+      </figure>
+    </div>
+  </main>
+
+  <script>
+    // Board chrome: S/M/L zoom, same pattern as mockup boards.
+    document.querySelectorAll(".board-zoom .btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.documentElement.style.setProperty("--board-scale", btn.dataset.scale);
+        document.querySelectorAll(".board-zoom .btn")
+          .forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+      });
+    });
+  </script>
+</body>
+</html>

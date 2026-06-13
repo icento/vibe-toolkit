@@ -58,6 +58,8 @@ docs/architecture/
   requests/               # the request ledger: one dir per tracked request
   _templates/             # adr.md, design.md + request/ lifecycle templates
 design-system/            # tokens.css + components.html + board.css — visual truth for all mockups
+  shadcn-bridge.css       # forwards tokens to shadcn/Basecoat variables (theming bridge)
+  themes/                 # preset aesthetic directions + showcase board — pick one on first UI work
 .claude/skills/
   vibe-request/           # /vibe-request — phased workflow orchestrator (see below)
   vibe-adr/               # /vibe-adr  — create a decision record, handle supersession

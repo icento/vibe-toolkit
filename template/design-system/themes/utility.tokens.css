@@ -1,0 +1,40 @@
+/* design-system/themes/utility.tokens.css — "Utility" preset direction.
+   Monochrome, square corners, mono-spaced headings, flat elevation;
+   instrument-panel utilitarianism for dense operational tools.
+   Preview: ../components.html?theme=utility (or via themes/index.html).
+   Chosen as the direction? Fold these values into ../tokens.css (and drop the
+   starter notice there) — screens keep importing tokens.css only.
+   Every pair holds WCAG 2.2 AA (text ≥ 4.5:1, control boundaries ≥ 3:1);
+   re-verify before editing any value. */
+
+:root {
+  --color-bg: #f2f2f2;
+  --color-surface: #ffffff;
+  --color-border: #dddddd;
+  --color-border-strong: #737475;   /* 4.68:1 vs surface, 4.18:1 vs bg */
+  --color-text: #111213;
+  --color-text-muted: #555657;      /* 6.57:1 on bg */
+  --color-primary: #1a1a1a;         /* black-button monochrome; 15.55:1 on bg */
+  --color-primary-hover: #3a3a3a;
+  --color-on-primary: #ffffff;
+  --color-primary-soft: #e6e6e6;
+  /* Status colors inherit the starter values — the only hue on the panel,
+     so state is unmistakable. */
+
+  /* Chart series: ink first, then desaturated functional hues — data may use
+     hue, but it stays muted so status colors keep their monopoly on alarm.
+     All ≥ 4.7:1 vs bg. */
+  --chart-1: #1a1a1a;   /* ink */
+  --chart-2: #3d6480;   /* steel blue */
+  --chart-3: #5e7150;   /* gray-green */
+  --chart-4: #8a5c00;   /* ochre */
+  --chart-5: #87434e;   /* muted brick */
+
+  --font-display: var(--font-mono);
+
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --shadow-sm: none;
+  --shadow-md: none;
+}

@@ -1,0 +1,37 @@
+/* design-system/themes/soft.tokens.css — "Soft" preset direction.
+   Rounded, airy, plum accent on a cool ground; for approachable consumer
+   surfaces and first-run experiences.
+   Preview: ../components.html?theme=soft (or via themes/index.html).
+   Chosen as the direction? Fold these values into ../tokens.css (and drop the
+   starter notice there) — screens keep importing tokens.css only.
+   Every pair holds WCAG 2.2 AA (text ≥ 4.5:1, control boundaries ≥ 3:1);
+   re-verify before editing any value. */
+
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@600&display=swap");
+
+:root {
+  --color-bg: #f6f3f8;
+  --color-surface: #ffffff;
+  --color-border: #e7e0ee;
+  --color-border-strong: #8b8095;   /* 3.74:1 vs surface, 3.40:1 vs bg */
+  --color-text: #2b2433;
+  --color-text-muted: #695f73;      /* 5.48:1 on bg */
+  --color-primary: #6f4385;         /* 6.78:1 on bg — link-safe */
+  --color-primary-hover: #5c3670;
+  --color-on-primary: #ffffff;
+  --color-primary-soft: #f1e7f6;    /* 6.21:1 under primary badge text */
+  /* Status colors inherit the starter values — they hold AA on this ground. */
+
+  /* Chart series: plum-led, rounded-feeling hues; all ≥ 4.3:1 vs bg. */
+  --chart-1: #6f4385;   /* the plum accent leads */
+  --chart-2: #2f6f8f;   /* teal-blue */
+  --chart-3: #b84a6e;   /* rose */
+  --chart-4: #2e7d5b;   /* green */
+  --chart-5: #a2632a;   /* amber */
+
+  --font-display: "Nunito", "Avenir Next", "Trebuchet MS", sans-serif;
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+}

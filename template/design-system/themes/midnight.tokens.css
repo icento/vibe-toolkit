@@ -1,0 +1,44 @@
+/* design-system/themes/midnight.tokens.css — "Midnight" preset direction.
+   Dark slate with an ice-blue accent; for dense, focused, evening-friendly
+   tools. The full status palette is redrawn for dark ground — soft fills go
+   dark, status text goes light.
+   Preview: ../components.html?theme=midnight (or via themes/index.html).
+   Chosen as the direction? Fold these values into ../tokens.css (and drop the
+   starter notice there) — screens keep importing tokens.css only.
+   Every pair holds WCAG 2.2 AA (text ≥ 4.5:1, control boundaries ≥ 3:1);
+   re-verify before editing any value. */
+
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@600&display=swap");
+
+:root {
+  --color-bg: #10141b;
+  --color-surface: #181f29;
+  --color-border: #273140;
+  --color-border-strong: #637286;   /* 3.38:1 vs surface, 3.76:1 vs bg */
+  --color-text: #e7ecf2;
+  --color-text-muted: #98a4b3;      /* 6.55:1 on surface */
+  --color-primary: #7cb5f0;         /* 8.55:1 on bg — link-safe */
+  --color-primary-hover: #9cc7f5;   /* dark themes hover lighter, not darker */
+  --color-on-primary: #0b1016;
+  --color-primary-soft: #1c2f45;    /* 6.31:1 under primary badge text */
+  --color-success: #62c08c;         /* 6.39:1 on success-soft */
+  --color-success-soft: #16301f;
+  --color-warning: #d9b05c;         /* 7.35:1 on warning-soft */
+  --color-warning-soft: #2e2613;
+  --color-danger: #ef8b85;          /* 6.40:1 on danger-soft */
+  --color-danger-soft: #381d1a;
+
+  /* Chart series: luminous pastels on dark ground (deliberately offset from
+     the status hues so a series never reads as a state); all ≥ 6.6:1 vs bg. */
+  --chart-1: #7cb5f0;   /* the ice-blue accent leads */
+  --chart-2: #54c2b4;   /* teal */
+  --chart-3: #c9a2f0;   /* lavender */
+  --chart-4: #ee9b5e;   /* orange */
+  --chart-5: #d77fb4;   /* pink */
+
+  --font-display: "Sora", "Avenir Next", "Segoe UI", sans-serif;
+
+  /* Elevation reads differently on dark ground — deepen, don't lighten. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+}

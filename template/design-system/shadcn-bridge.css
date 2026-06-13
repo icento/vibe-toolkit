@@ -1,0 +1,56 @@
+/* design-system/shadcn-bridge.css — feeds tokens.css into the shadcn variable
+   contract (--background, --primary, --radius…), the de-facto theming
+   interface of shadcn/ui, Basecoat, tweakcn, and friends.
+
+   Two uses:
+   1. Implementing a frontend on shadcn/ui or Basecoat: import tokens.css then
+      this file in the app's global stylesheet — the direction chosen at the
+      mockup alignment gate flows into the component library with no hand
+      translation.
+   2. The Basecoat mockup track (see /vibe-mockup rule 2): screens import
+      vendor/basecoat.min.css, then tokens.css, then this bridge — the bridge
+      must come LAST so its :root values override Basecoat's built-in zinc
+      defaults.
+
+   tokens.css stays the single source of truth: this file only forwards, it
+   never holds a literal value. If a shadcn slot has no good token, map the
+   closest role — never invent a color here.
+
+   Note: Basecoat's compiled CSS reads Tailwind-namespace variables, and some
+   token names coincide (--color-primary, --color-border, --radius-md…), so
+   those flow into Basecoat directly; this bridge feeds the slots that don't
+   (--secondary, --muted, --ring…). Harmless on the default track — the
+   variables below are simply unused.
+
+   Mapped for light-mode tokens. If the chosen direction is dark (e.g. the
+   midnight preset), also set `color-scheme: dark` on :root in tokens.css so
+   native controls follow. */
+
+:root {
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-primary);
+  --primary-foreground: var(--color-on-primary);
+  --secondary: var(--color-primary-soft);
+  --secondary-foreground: var(--color-primary);
+  --muted: var(--color-bg);
+  --muted-foreground: var(--color-text-muted);
+  --accent: var(--color-primary-soft);
+  --accent-foreground: var(--color-primary);
+  --destructive: var(--color-danger);
+  --destructive-foreground: var(--color-on-primary);
+  --border: var(--color-border);
+  --input: var(--color-border-strong);
+  --ring: var(--color-primary);
+
+  /* shadcn's --radius is the base from which its sm/md/lg/xl derive. */
+  --radius: var(--radius-md);
+
+  /* Chart slots share the shadcn names already — declared in tokens.css
+     (--chart-1…5); nothing to forward. Font slots match by name too
+     (--font-sans, --font-mono). */
+}

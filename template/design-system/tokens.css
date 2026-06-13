@@ -1,12 +1,22 @@
 /* design-system/tokens.css — the single source of visual truth.
    Every mockup and frontend imports this file. Mockups never hardcode a color,
    size, or font: if a value isn't a token here, add the token first (and show
-   it in components.html), then use it. */
+   it in components.html), then use it.
+
+   STARTER LOOK: the values below are a deliberately neutral default so the
+   system works out of the box — a placeholder, not a design. Before a
+   frontend's first real screens, commit to an aesthetic direction (browse
+   themes/index.html, or describe your own) and fold it in here — the
+   /vibe-mockup skill drives this. Delete this notice once a direction is
+   chosen. */
 
 :root {
   /* ---- palette ----
      Pairs must hold WCAG 2.2 AA: text on its background ≥ 4.5:1 (3:1 large),
-     control borders/icons vs adjacent colors ≥ 3:1. Check before adding a pair. */
+     control borders/icons vs adjacent colors ≥ 3:1. Check before adding a pair.
+     Roles: --color-primary marks the one primary action per view, plus links;
+     *-soft fills are for badges and selected states, never large surfaces;
+     status colors (success/warning/danger) mark state, never decoration. */
   --color-bg: #f7f7f5;
   --color-surface: #ffffff;
   --color-border: #e4e4e0;          /* decorative dividers only — never a control's sole boundary */
@@ -24,8 +34,27 @@
   --color-danger: #c4332d;
   --color-danger-soft: #fbe9e8;
 
-  /* ---- typography ---- */
+  /* ---- chart series ----
+     Categorical palette for static SVG charts (named to the shadcn --chart-N
+     convention, so shadcn/tweakcn themes slot straight in). Series are
+     assigned in order; every value holds ≥ 3:1 vs bg and surface (WCAG 1.4.11,
+     thin marks like lines). Adjacent slots differ by hue, so a legend or
+     direct label always names the series — color is never the only signal.
+     Never use status colors (success/warning/danger) as series fills. */
+  --chart-1: #2f5af0;   /* 5.10:1 vs bg */
+  --chart-2: #0c7d72;   /* 4.67:1 vs bg */
+  --chart-3: #a25b00;   /* 4.85:1 vs bg */
+  --chart-4: #7a4bd6;   /* 5.15:1 vs bg */
+  --chart-5: #bb3f6e;   /* 4.84:1 vs bg */
+  --chart-grid: var(--color-border);   /* gridlines are decoration, not data */
+
+  /* ---- typography ----
+     Roles: --font-display is headings only — themes pair it against
+     --font-sans; never introduce a third family. --text-3xl/-2xl are page/
+     section titles (one --text-3xl per page); --text-base is body;
+     --text-sm is controls, tables, dense data; --text-xs is help/meta only. */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+  --font-display: var(--font-sans);
   --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -40,7 +69,9 @@
   --weight-medium: 500;
   --weight-semibold: 600;
 
-  /* ---- spacing (4px scale) ---- */
+  /* ---- spacing (4px scale) ----
+     Rhythm: the gap between groups is at least one step larger than the gap
+     within them (ui-principles: proximity is meaning). */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -55,7 +86,9 @@
   --size-field: 160px;      /* compact form field (amount, category, date) */
   --size-target-min: 24px;  /* WCAG 2.2 pointer-target floor; prefer 40px+ for primary controls */
 
-  /* ---- shape & elevation ---- */
+  /* ---- shape & elevation ----
+     Roles: --radius-sm controls; --radius-md cards/containers; --radius-lg
+     modals and hero surfaces; the 999px pill is reserved for badges. */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
@@ -89,7 +122,7 @@ body {
   color: var(--color-text);
   background: var(--color-bg);
 }
-h1, h2, h3 { line-height: var(--leading-tight); font-weight: var(--weight-semibold); margin: 0 0 var(--space-3); }
+h1, h2, h3 { font-family: var(--font-display); line-height: var(--leading-tight); font-weight: var(--weight-semibold); margin: 0 0 var(--space-3); }
 h1 { font-size: var(--text-3xl); }
 h2 { font-size: var(--text-2xl); }
 h3 { font-size: var(--text-xl); }
@@ -139,6 +172,23 @@ code { font-family: var(--font-mono); font-size: var(--text-sm); }
 .badge-danger { background: var(--color-danger-soft); color: var(--color-danger); }
 
 .align-right { text-align: right; }
+
+/* Charts are static inline SVG (see the /vibe-mockup chart rule). Text drawn
+   inside the SVG sizes in user units (unitless font-size attribute) so it
+   scales with the geometry; these classes supply family and color only.
+   The HTML legend uses normal type tokens. */
+.chart svg { display: block; width: 100%; height: auto; }
+.chart-title { font-size: var(--text-sm); font-weight: var(--weight-medium); margin-bottom: var(--space-3); }
+.chart-axis { font-family: var(--font-sans); fill: var(--color-text-muted); }
+.chart-value { font-family: var(--font-sans); fill: var(--color-text); font-weight: var(--weight-semibold); }
+.chart-grid-line { stroke: var(--chart-grid); }
+.chart-legend {
+  display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4);
+  margin: var(--space-3) 0 0; padding: 0; list-style: none;
+  font-size: var(--text-xs); color: var(--color-text-muted);
+}
+.chart-legend li { display: inline-flex; align-items: center; gap: var(--space-2); }
+.chart-swatch { width: 10px; height: 10px; border-radius: 2px; flex: none; }
 
 .table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
 .table th {

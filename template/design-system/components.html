@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Design system — component gallery</title>
   <link rel="stylesheet" href="tokens.css">
+  <script>
+    // Theme preview: components.html?theme=<name> overlays themes/<name>.tokens.css
+    // (synchronous insert so the override loads before first paint).
+    const theme = new URLSearchParams(location.search).get("theme");
+    if (/^[\w-]+$/.test(theme ?? "")) {
+      document.head.insertAdjacentHTML("beforeend",
+        `<link rel="stylesheet" href="themes/${theme}.tokens.css">`);
+    }
+  </script>
   <style>
     /* Gallery chrome only — never reuse these classes in mockups. */
     .gallery { max-width: 56rem; margin: 0 auto; padding: var(--space-7) var(--space-5); }
@@ -19,7 +28,10 @@
   <main class="gallery">
     <h1>Component gallery</h1>
     <p class="help">Every visual decision in mockups comes from <code>tokens.css</code>.
-      New component or token needed? Add it here first, then use it.</p>
+      New component or token needed? Add it here first, then use it.
+      Comparing aesthetic directions? See <a href="themes/index.html">the theme
+      showcase</a> — this page re-renders under any preset via
+      <code>?theme=&lt;name&gt;</code>.</p>
 
     <section>
       <h2>Layout</h2>
@@ -87,6 +99,89 @@
         <span class="badge badge-success">Delivered</span>
         <span class="badge badge-warning">Deferred</span>
         <span class="badge badge-danger">Failed</span>
+      </div>
+    </section>
+
+    <section>
+      <h2>Charts</h2>
+      <p class="help">Charts are static inline SVG — geometry is data (unitless
+        coordinates), every color comes from <code>--chart-1…5</code> /
+        <code>--chart-grid</code>, axis labels and legends are real text. Copy
+        these as starting points; the chart rule in the /vibe-mockup skill has
+        the full contract.</p>
+      <div class="row" style="align-items: stretch">
+
+        <figure class="chart card" style="flex: 1; min-width: var(--size-field); margin: 0">
+          <figcaption class="chart-title">Revenue by month</figcaption>
+          <svg viewBox="0 0 260 150" role="img" aria-label="Bar chart: monthly revenue, January 38 to June 84 thousand dollars, rising overall">
+            <line class="chart-grid-line" x1="34" y1="20" x2="252" y2="20"/>
+            <line class="chart-grid-line" x1="34" y1="53" x2="252" y2="53"/>
+            <line class="chart-grid-line" x1="34" y1="87" x2="252" y2="87"/>
+            <line class="chart-grid-line" x1="34" y1="120" x2="252" y2="120"/>
+            <text class="chart-axis" x="28" y="124" font-size="9" text-anchor="end">0</text>
+            <text class="chart-axis" x="28" y="91" font-size="9" text-anchor="end">30k</text>
+            <text class="chart-axis" x="28" y="57" font-size="9" text-anchor="end">60k</text>
+            <text class="chart-axis" x="28" y="24" font-size="9" text-anchor="end">90k</text>
+            <rect fill="var(--chart-1)" x="40"  y="78" width="22" height="42"/>
+            <rect fill="var(--chart-1)" x="75"  y="62" width="22" height="58"/>
+            <rect fill="var(--chart-1)" x="110" y="68" width="22" height="52"/>
+            <rect fill="var(--chart-1)" x="145" y="47" width="22" height="73"/>
+            <rect fill="var(--chart-1)" x="180" y="41" width="22" height="79"/>
+            <rect fill="var(--chart-1)" x="215" y="27" width="22" height="93"/>
+            <text class="chart-axis" x="51"  y="134" font-size="9" text-anchor="middle">Jan</text>
+            <text class="chart-axis" x="86"  y="134" font-size="9" text-anchor="middle">Feb</text>
+            <text class="chart-axis" x="121" y="134" font-size="9" text-anchor="middle">Mar</text>
+            <text class="chart-axis" x="156" y="134" font-size="9" text-anchor="middle">Apr</text>
+            <text class="chart-axis" x="191" y="134" font-size="9" text-anchor="middle">May</text>
+            <text class="chart-axis" x="226" y="134" font-size="9" text-anchor="middle">Jun</text>
+          </svg>
+        </figure>
+
+        <figure class="chart card" style="flex: 1; min-width: var(--size-field); margin: 0">
+          <figcaption class="chart-title">Sessions vs signups</figcaption>
+          <svg viewBox="0 0 260 150" role="img" aria-label="Line chart: sessions grow from 21 to 48 hundred, signups from 8 to 19 hundred, January to June">
+            <line class="chart-grid-line" x1="34" y1="20" x2="252" y2="20"/>
+            <line class="chart-grid-line" x1="34" y1="53" x2="252" y2="53"/>
+            <line class="chart-grid-line" x1="34" y1="87" x2="252" y2="87"/>
+            <line class="chart-grid-line" x1="34" y1="120" x2="252" y2="120"/>
+            <text class="chart-axis" x="28" y="124" font-size="9" text-anchor="end">0</text>
+            <text class="chart-axis" x="28" y="91" font-size="9" text-anchor="end">2k</text>
+            <text class="chart-axis" x="28" y="57" font-size="9" text-anchor="end">4k</text>
+            <text class="chart-axis" x="28" y="24" font-size="9" text-anchor="end">6k</text>
+            <polyline fill="none" stroke="var(--chart-1)" stroke-width="2"
+              points="44,85 84,76 124,79 164,62 204,49 244,40"/>
+            <polyline fill="none" stroke="var(--chart-2)" stroke-width="2"
+              points="44,107 84,103 124,98 164,96 204,89 244,88"/>
+            <text class="chart-axis" x="44"  y="134" font-size="9" text-anchor="middle">Jan</text>
+            <text class="chart-axis" x="144" y="134" font-size="9" text-anchor="middle">Apr</text>
+            <text class="chart-axis" x="244" y="134" font-size="9" text-anchor="middle">Jun</text>
+          </svg>
+          <ul class="chart-legend">
+            <li><span class="chart-swatch" style="background: var(--chart-1)"></span>Sessions</li>
+            <li><span class="chart-swatch" style="background: var(--chart-2)"></span>Signups</li>
+          </ul>
+        </figure>
+
+        <figure class="chart card" style="flex: 1; min-width: var(--size-field); margin: 0">
+          <figcaption class="chart-title">Traffic sources</figcaption>
+          <svg viewBox="0 0 150 150" role="img" aria-label="Donut chart: 12,480 visits — organic 45 percent, referral 35 percent, paid 20 percent">
+            <g transform="rotate(-90 75 75)">
+              <circle fill="none" stroke="var(--chart-1)" stroke-width="16" r="40" cx="75" cy="75"
+                stroke-dasharray="113.1 251.3"/>
+              <circle fill="none" stroke="var(--chart-2)" stroke-width="16" r="40" cx="75" cy="75"
+                stroke-dasharray="88 251.3" stroke-dashoffset="-113.1"/>
+              <circle fill="none" stroke="var(--chart-3)" stroke-width="16" r="40" cx="75" cy="75"
+                stroke-dasharray="50.2 251.3" stroke-dashoffset="-201.1"/>
+            </g>
+            <text class="chart-value" x="75" y="73" font-size="18" text-anchor="middle">12,480</text>
+            <text class="chart-axis" x="75" y="88" font-size="9" text-anchor="middle">visits</text>
+          </svg>
+          <ul class="chart-legend">
+            <li><span class="chart-swatch" style="background: var(--chart-1)"></span>Organic 45%</li>
+            <li><span class="chart-swatch" style="background: var(--chart-2)"></span>Referral 35%</li>
+            <li><span class="chart-swatch" style="background: var(--chart-3)"></span>Paid 20%</li>
+          </ul>
+        </figure>
       </div>
     </section>
 

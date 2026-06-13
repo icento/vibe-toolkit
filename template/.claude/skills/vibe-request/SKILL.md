@@ -25,9 +25,12 @@ the last command after the final edit, not just the first.
    - **S** — fix/refactor within the existing design. Phases: implementing → qa →
      delivered. No gates, no ledger entry unless it spans sessions.
    - **M** — feature within the current architecture, no UI mockups.
-     Phases: understanding → designing → planning → implementing → qa → delivered.
-     Gate G2 (design) only.
+     Phases: understanding → designing → aligning → planning → implementing → qa →
+     delivered. Gate G2 (design) only — captured in `aligning`.
    - **L** — new component, redesign, or anything with UI. All phases, gates G1 + G2.
+
+   A backward transition can change the size: re-triage when scope grows (an M that
+   gains UI becomes L) and apply the larger size's gates from then on.
 
 ## Phases
 
@@ -45,15 +48,23 @@ Link every artifact in `outcome:`.
 user explicitly approves → record `approvals.design` (gate G2).
 
 **planning** — write `plan.md` from the approved design: ordered tasks, each sized
-for one agent's context, naming files touched, dependencies, and a verification
-step. Delegate large scopes to a `vibe-planner` subagent.
+for one agent's context, naming files touched, dependencies, a verification step that
+proves design intent, the design source each task implements (`from:`), and shared
+contracts pinned so parallel tasks don't each invent them. Delegate large scopes to a
+`vibe-planner` subagent — it owns these rules in full; apply them yourself when you
+plan a small scope directly.
 
 **implementing** — execute `plan.md`, checking tasks off as they land. Tasks run
 as `vibe-implementer` subagents — independent ones in parallel (worktree isolation
 when they touch overlapping files); each subagent's prompt names the artifact
-files to read first. Design-doc updates ship in the same change as the code.
+files to read first. Doc detail the design left open ships in the same change as the
+code; a change to an *approved* decision routes back as a design-gap, never a
+self-rewrite (see `vibe-implementer`).
 
-**qa** — spawn fresh `vibe-qa` subagents with NO implementation context. Their inputs:
+**qa** — spawn fresh `vibe-qa` subagents with no *implementation* context (how it was
+built) — but do give them what they need to run it: the launch command and a test-auth
+path, or a pointer to the run skill, so the mandated visual pass against the mockups
+can actually happen. Their inputs:
 `understanding.md`, the design docs, data schemas, mockups, `plan.md`'s end-to-end
 verification section, plus `principles.md` and `style.md` (conformance to both is in scope).
 Their job: break the result against the agreed spec. Write
@@ -61,10 +72,13 @@ Their job: break the result against the agreed spec. Write
 - **bug** → fix now; stay in qa until the report is clean
 - **design-gap** → set phase back to `designing`; update designs/ADRs, re-align if material
 - **scope-change** → set phase back to `understanding`; back to the user
-Backward transitions are normal — record each in `## Log` with the reason.
+Backward transitions are normal — record each in `## Log` with the reason. Every routed
+finding returns *through* qa and re-verifies before `delivered` — nothing ships unverified.
 
 **delivered** — give the user a delivery report: what changed, how it was verified
-(quote evidence from `qa-report.md`), and how to run it. Set `status: done`,
+(quote evidence from `qa-report.md`), and how to run it. For UI work, state mockup
+parity explicitly — every implemented screen matches its mockup, or list the
+intentional deviations and why. Set `status: done`,
 `phase: delivered`, then a final `node scripts/arch-docs.mjs check` after that
 last edit.
 

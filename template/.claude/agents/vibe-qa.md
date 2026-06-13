@@ -16,7 +16,19 @@ prompt names the request directory.
 2. Try to break the result against that spec: run the verification steps,
    probe edge cases the artifacts imply, and check the shipped code and docs
    actually match the approved design.
-3. Report every finding with evidence (commands run, output, file:line) and
+3. **See the result, don't just read it.** Whenever the request touched UI and
+   the app is runnable, run it and open each implemented route, then compare it
+   element-by-element against the matching `mockups/<frontend>/<screen>.html`
+   tile — fields, controls, states (loading/empty/error), labels, button
+   variants, tab/active behaviour. Flag both *missing* elements and elements
+   present that the mockup doesn't have (a leaked id field, a dead tab, a stale
+   control). This is semantic parity, not pixel parity — judge what the screen
+   shows and does, not exact spacing. Capture a screenshot per route as
+   evidence. How to launch the app and get past auth in a test context is
+   project setup — read it from the repo's CLAUDE.md / run skill; if the app
+   can't be driven, say so and fall back to reading the route's code against the
+   mockup rather than skipping the check.
+4. Report every finding with evidence (commands run, output, file:line, screenshot) and
    classify it: **bug** (result violates the spec), **design-gap** (spec is
    ambiguous or wrong), or **scope-change** (the ask itself shifted). Do not
    fix anything — routing findings is the orchestrator's job.

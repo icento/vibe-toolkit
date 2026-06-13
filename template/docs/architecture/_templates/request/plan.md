@@ -1,12 +1,13 @@
 # Implementation plan — REQ-NNNN
 
-> Derived from the approved design. Each task is sized to fit one agent's context
-> and names the files it touches, so independent tasks can run as parallel subagents.
+> Derived from the approved design. Each task is sized to fit one agent's context,
+> names the files it touches, and cites the design element it implements (`from:`),
+> so independent tasks run as parallel subagents and nothing designed goes unbuilt.
 
 ## Tasks
 
-- [ ] 1. <task> — files: `path/**` — verify: <command or observable behavior>
-- [ ] 2. <task> — files: `path/**` — depends on: 1 — verify: <…>
+- [ ] 1. <task> — from: `<design doc#section | ADR-NNNN | schema entity | mockup screen>` — files: `path/**` — verify: <behavior that proves the design intent>
+- [ ] 2. <task> — from: `<…>` — files: `path/**` — depends on: 1 — verify: <…>
 
 ## Risks
 
